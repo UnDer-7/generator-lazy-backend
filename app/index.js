@@ -2,7 +2,7 @@
 const Generator = require('yeoman-generator')
 const path = require('path')
 
-const fieldOptions = require('./prompt')
+const fieldOptions = require('./generator/questions/entitys')
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -31,7 +31,7 @@ module.exports = class extends Generator {
         message: `Do you want to add a field to your entity?`
       }
     ])
-    
+
     if (this.addField.addField) {
       this.fields = await this.prompt(fieldOptions)
     }
@@ -41,6 +41,7 @@ module.exports = class extends Generator {
     this._private_src()
     this._private_settings()
     this._private_entity()
+    this._private_config()
   }
 
   _private_src() {
@@ -97,17 +98,49 @@ module.exports = class extends Generator {
     )
   }
 
-  _private_entity() {
+  _private_entity () {
     this.destinationRoot(path.resolve('src', 'app', 'controllers'))
+    this.fs.copyTpl(
+      this.templatePath('./src/app/controllers/index.js'),
+      this.destinationPath('index.js')
+    )
+
+    this.fs.copyTpl(
+      this.templatePath('./src/app/controllers/UserController.js'),
+      this.destinationPath('UserController.js')
+    )
+
+    this.fs.copyTpl(
+      this.templatePath('./src/app/controllers/SessionController.js'),
+      this.destinationPath('SessionController.js')
+    )
+
     this.fs.copyTpl(
       this.templatePath('./src/app/controllers/TemplateController.js'),
       this.destinationPath(`${this.answers.entityName}Controller.js`),
       {
-        entity: this.answers.entityName
+        entity: this.answers.entityName,
+        field: this.fields
       }
     )
 
+    this.destinationRoot(path.resolve('..', 'middlewares'))
+    this.fs.copyTpl(
+      this.templatePath('./src/app/middlewares/auth.js'),
+      this.destinationPath('auth.js')
+    )
+
     this.destinationRoot(path.resolve('..', 'models'))
+    this.fs.copyTpl(
+      this.templatePath('./src/app/models/index.js'),
+      this.destinationPath('index.js')
+    )
+
+    this.fs.copyTpl(
+      this.templatePath('./src/app/models/UserModel.js'),
+      this.destinationPath('UserModel.js')
+    )
+
     this.fs.copyTpl(
       this.templatePath('./src/app/models/TemplateModel.js'),
       this.destinationPath(`${this.answers.entityName}Model.js`),
@@ -115,6 +148,45 @@ module.exports = class extends Generator {
         field: this.fields,
         entity: this.answers.entityName
       }
+    )
+
+    this.destinationRoot(path.resolve('..', 'validators'))
+    this.fs.copyTpl(
+      this.templatePath('./src/app/validators/index.js'),
+      this.destinationPath('index.js')
+    )
+
+    this.fs.copyTpl(
+      this.templatePath('./src/app/validators/UserValidator.js'),
+      this.destinationPath('UserValidator.js')
+    )
+
+    let req = ''
+    if (this.fields.required) {
+      req = '.required()'
+    }
+
+    this.fs.copyTpl(
+      this.templatePath('./src/app/validators/TemplateValidator.js'),
+      this.destinationPath(`${this.answers.entityName}Validator.js`),
+      {
+        field: this.fields,
+        entity: this.answers.entityName,
+        required: req
+      }
+    )
+  }
+
+  _private_config () {
+    this.destinationRoot(path.resolve('..', '..', 'config'))
+    this.fs.copyTpl(
+      this.templatePath('./config/databaseConfig.js'),
+      this.destinationPath('databaseConfig.js')
+    )
+
+    this.fs.copyTpl(
+      this.templatePath('./config/authConfig.js'),
+      this.destinationPath('authConfig.js')
     )
   }
 };

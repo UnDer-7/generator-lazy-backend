@@ -10,4 +10,4 @@ const <%= entity %>Schema = new mongoose.Schema({
     default: Date.now()
   }
 })
-module.exports = mongoose.model('Template', TemplateSchema)
+module.exports = mongoose.model('<%= entity %>', <%= entity %>Schema)
