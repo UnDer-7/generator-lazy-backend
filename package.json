@@ -1,0 +1,33 @@
+{
+  "name": "generator-lazy-backend",
+  "version": "1.0.0",
+  "description": "yeoman generator for those how are to lazy to make a simple nodeJS backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "yeoman-generator",
+    "nodejs",
+    "express",
+    "backend",
+    "mongodb",
+    "mongoose"
+  ],
+  "author": "Mateus Gomes",
+  "license": "ISC",
+  "dependencies": {
+    "yeoman-generator": "^3.1.1"
+  },
+  "files": [
+    "app"
+  ],
+  "devDependencies": {
+    "eslint": "^5.10.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0"
+  }
+}
