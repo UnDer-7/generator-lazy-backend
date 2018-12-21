@@ -178,18 +178,12 @@ module.exports = class extends Generator {
       this.destinationPath('UserValidator.js')
     )
 
-    let req = ''
-    if (this.fields.required) {
-      req = '.required()'
-    }
-
     this.fs.copyTpl(
       this.templatePath('./src/app/validators/TemplateValidator.js'),
       this.destinationPath(`${this.answers.entityName}Validator.js`),
       {
         field: this.fields,
-        entity: this.answers.entityName,
-        required: req
+        entity: this.answers.entityName
       }
     )
   }
