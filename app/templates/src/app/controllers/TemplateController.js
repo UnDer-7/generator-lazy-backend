@@ -2,9 +2,9 @@ const <%= entity %>Model = require('../models/<%= entity %>Model')
 
 class <%= entity %>Controller {
   async create<%= entity %> (req, res) {
-    const { <%= field.fieldName %> } = req.body
+    const { <%= field[0].fieldName %> } = req.body
 
-    if (await <%= entity %>Model.findOne({ <%= field.fieldName %> })) {
+    if (await <%= entity %>Model.findOne({ <%= field[0].fieldName %> })) {
       return res.status(400).json({ error: '<%= entity %> already exists' })
     }
 

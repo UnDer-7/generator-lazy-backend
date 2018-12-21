@@ -19,22 +19,30 @@ module.exports = class extends Generator {
       },
       {
         type: 'input',
+        name: 'databaseName',
+        message: `What's the database's name?`
+      },
+      {
+        type: 'input',
         name: 'entityName',
         message: `What's the entity's name?`
       }
     ])
 
-    this.addField = await this.prompt([
-      {
-        type: 'confirm',
-        name: 'addField',
-        message: `Do you want to add a field to your entity?`
+    this.fields = []
+    do {
+      this.addField = await this.prompt([
+        {
+          type: 'confirm',
+          name: 'addField',
+          message: `Do you want to add a field to your entity?`
+        }
+      ])
+      if (this.addField.addField) {
+        this.fields.push(await this.prompt(fieldOptions))
       }
-    ])
+    } while (this.addField.addField)
 
-    if (this.addField.addField) {
-      this.fields = await this.prompt(fieldOptions)
-    }
   }
 
   start() {
@@ -74,7 +82,10 @@ module.exports = class extends Generator {
 
     this.fs.copyTpl(
       this.templatePath('./.env'),
-      this.destinationPath('.env')
+      this.destinationPath('.env'),
+      {
+        db: this.answers.databaseName,
+      }
     )
 
     this.fs.copyTpl(
@@ -89,16 +100,22 @@ module.exports = class extends Generator {
 
     this.fs.copyTpl(
       this.templatePath('./package.json'),
-      this.destinationPath('package.json')
+      this.destinationPath('package.json'),
+      {
+        project: this.answers.projectName
+      }
     )
 
     this.fs.copyTpl(
       this.templatePath('./package-lock.json'),
-      this.destinationPath('package-lock.json')
+      this.destinationPath('package-lock.json'),
+      {
+        project: this.answers.projectName
+      }
     )
   }
 
-  _private_entity () {
+  _private_entity() {
     this.destinationRoot(path.resolve('src', 'app', 'controllers'))
     this.fs.copyTpl(
       this.templatePath('./src/app/controllers/index.js'),
@@ -177,7 +194,7 @@ module.exports = class extends Generator {
     )
   }
 
-  _private_config () {
+  _private_config() {
     this.destinationRoot(path.resolve('..', '..', 'config'))
     this.fs.copyTpl(
       this.templatePath('./config/databaseConfig.js'),

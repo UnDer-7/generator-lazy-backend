@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 
-const <%= entity %>Schema = new mongoose.Schema({
-  <%= field.fieldName %>: {
-    type: <%= field.fieldType %>,
-    required: <%= field.required %>
-  },
+const <%= entity %>Schema = new mongoose.Schema({ <% for(let i=0; i< field.length; i++) { %>
+  <%= field[i].fieldName %>: {
+    type: <%= field[i].fieldType %>,
+    required: <%= field[i].required %>
+  },<% } %>
   createdAt: {
     type: Date,
     default: Date.now()
