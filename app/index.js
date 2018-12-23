@@ -43,6 +43,13 @@ module.exports = class extends Generator {
       }
     } while (this.addField.addField)
 
+    this.npm = await this.prompt([
+      {
+        type: 'confirm',
+        name: 'npmI',
+        message: 'Would you like to run npm install?'
+      }
+    ])
   }
 
   start() {
@@ -50,6 +57,10 @@ module.exports = class extends Generator {
     this._private_settings()
     this._private_entity()
     this._private_config()
+
+    if (this.npm.npmI) {
+      this.npmInstall()
+    }
   }
 
   _private_src() {
@@ -80,11 +91,14 @@ module.exports = class extends Generator {
       this.destinationPath('.editorconfig')
     )
 
+    const randomNuber = Math.floor(Math.random() * 10000000);
+
     this.fs.copyTpl(
       this.templatePath('./.env'),
       this.destinationPath('.env'),
       {
         db: this.answers.databaseName,
+        appSecret: randomNuber
       }
     )
 

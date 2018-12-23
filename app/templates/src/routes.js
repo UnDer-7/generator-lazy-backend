@@ -18,9 +18,12 @@ routes.use(authMiddleware)
 routes.get(`${rootUrl}/user`, handle(controllers.UserController.getAllUsers))
 
 /**
- * Entity
+ * Entity <%= entity %>
  */
 routes.post(`${rootUrl}/<%= entity.toLowerCase() %>`, validate(validators.<%= entity %>Validator), handle(controllers.<%= entity %>Controller.create<%= entity %>))
+routes.put(`${rootUrl}/<%= entity.toLowerCase() %>/:id`, validate(validators.<%= entity %>Validator), handle(controllers.<%= entity %>Controller.update<%= entity %>))
 routes.get(`${rootUrl}/<%= entity.toLowerCase() %>`, handle(controllers.<%= entity %>Controller.getAll<%= entity %>))
+routes.get(`${rootUrl}/<%= entity.toLowerCase() %>/:id`, handle(controllers.<%= entity %>Controller.get<%= entity %>))
+routes.delete(`${rootUrl}/<%= entity.toLowerCase() %>/:id`, handle(controllers.<%= entity %>Controller.delete<%= entity %>))
 
 module.exports = routes

@@ -42,6 +42,8 @@ class App {
         const youch = new Youch(err)
         return res.json(await youch.toJSON())
       }
+
+      return res.status(err.status || 500).json({ error: 'Internal Server Error' })
     })
   }
 }
