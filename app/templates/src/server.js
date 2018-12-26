@@ -22,6 +22,7 @@ class App {
       useCreateIndex: true,
       useNewUrlParser: true
     })
+    mongoose.set('debug', true)
   }
 
   middleware () {

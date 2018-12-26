@@ -13,8 +13,17 @@ class UserController {
   }
 
   async updateUser (req, res) {
-    const userRes = await UserModel.findOneAndUpdate(req.params.id, req.body, { new: true })
-    return res.json(userRes)
+    const { login, password } = req.body
+    await UserModel.findById(req.params.id, (err, user) => {
+      if (err) return res.status(500).json({ error: 'Unable to update the document', err })
+
+      user.login = login
+      user.password = password
+      user.save((err, updatedUser) => {
+        if (err) return res.status(500).json({ error: 'Unable to update the document', err })
+        res.json(updatedUser)
+      })
+    })
   }
 
   async getAllUser (req, res) {
