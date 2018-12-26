@@ -1,13 +1,15 @@
 'use strict'
 const Generator = require('yeoman-generator')
 const path = require('path')
-
-const fieldOptions = require('./generator/questions/entitys')
+const chalk = require('chalk')
 
 module.exports = class extends Generator {
   constructor(args, opts) {
     super(args, opts);
-    this.log('Initializing the lazy-generator');
+    this.log(chalk.red.bgBlack('\n------------------------------'))
+    this.log(chalk.red.bgBlack('---------LAZY-BACKEND---------'))
+    this.log(chalk.red.bgBlack('-----------REST-API-----------'))
+    this.log(('\nInitializing the lazy-backend\n'))
   }
 
   async prompting() {
@@ -23,25 +25,11 @@ module.exports = class extends Generator {
         message: `What's the database's name?`
       },
       {
-        type: 'input',
-        name: 'entityName',
-        message: `What's the entity's name?`
+        type: 'confirm',
+        name: 'login',
+        message: `Would you like to use JWT validation?`
       }
     ])
-
-    this.fields = []
-    do {
-      this.addField = await this.prompt([
-        {
-          type: 'confirm',
-          name: 'addField',
-          message: `Do you want to add a field to your entity?`
-        }
-      ])
-      if (this.addField.addField) {
-        this.fields.push(await this.prompt(fieldOptions))
-      }
-    } while (this.addField.addField)
 
     this.npm = await this.prompt([
       {
@@ -74,7 +62,7 @@ module.exports = class extends Generator {
       this.templatePath('./src/routes.js'),
       this.destinationPath('routes.js'),
       {
-        entity: this.answers.entityName
+        login: this.answers.login
       }
     )
 
@@ -98,7 +86,8 @@ module.exports = class extends Generator {
       this.destinationPath('.env'),
       {
         db: this.answers.databaseName,
-        appSecret: randomNuber
+        appSecret: randomNuber,
+        login: this.answers.login
       }
     )
 
@@ -116,7 +105,8 @@ module.exports = class extends Generator {
       this.templatePath('./package.json'),
       this.destinationPath('package.json'),
       {
-        project: this.answers.projectName
+        project: this.answers.projectName,
+        login: this.answers.login
       }
     )
 
@@ -136,49 +126,10 @@ module.exports = class extends Generator {
       this.destinationPath('index.js')
     )
 
-    this.fs.copyTpl(
-      this.templatePath('./src/app/controllers/UserController.js'),
-      this.destinationPath('UserController.js')
-    )
-
-    this.fs.copyTpl(
-      this.templatePath('./src/app/controllers/SessionController.js'),
-      this.destinationPath('SessionController.js')
-    )
-
-    this.fs.copyTpl(
-      this.templatePath('./src/app/controllers/TemplateController.js'),
-      this.destinationPath(`${this.answers.entityName}Controller.js`),
-      {
-        entity: this.answers.entityName,
-        field: this.fields
-      }
-    )
-
-    this.destinationRoot(path.resolve('..', 'middlewares'))
-    this.fs.copyTpl(
-      this.templatePath('./src/app/middlewares/auth.js'),
-      this.destinationPath('auth.js')
-    )
-
     this.destinationRoot(path.resolve('..', 'models'))
     this.fs.copyTpl(
       this.templatePath('./src/app/models/index.js'),
       this.destinationPath('index.js')
-    )
-
-    this.fs.copyTpl(
-      this.templatePath('./src/app/models/UserModel.js'),
-      this.destinationPath('UserModel.js')
-    )
-
-    this.fs.copyTpl(
-      this.templatePath('./src/app/models/TemplateModel.js'),
-      this.destinationPath(`${this.answers.entityName}Model.js`),
-      {
-        field: this.fields,
-        entity: this.answers.entityName
-      }
     )
 
     this.destinationRoot(path.resolve('..', 'validators'))
@@ -187,19 +138,36 @@ module.exports = class extends Generator {
       this.destinationPath('index.js')
     )
 
-    this.fs.copyTpl(
-      this.templatePath('./src/app/validators/UserValidator.js'),
-      this.destinationPath('UserValidator.js')
-    )
+    if (this.answers.login) {
+      this.destinationRoot(path.resolve('..', 'controllers'))
+      this.fs.copyTpl(
+        this.templatePath('./src/app/controllers/UserController.js'),
+        this.destinationPath('UserController.js')
+      )
 
-    this.fs.copyTpl(
-      this.templatePath('./src/app/validators/TemplateValidator.js'),
-      this.destinationPath(`${this.answers.entityName}Validator.js`),
-      {
-        field: this.fields,
-        entity: this.answers.entityName
-      }
-    )
+      this.fs.copyTpl(
+        this.templatePath('./src/app/controllers/SessionController.js'),
+        this.destinationPath('SessionController.js')
+      )
+
+      this.destinationRoot(path.resolve('..', 'middlewares'))
+      this.fs.copyTpl(
+        this.templatePath('./src/app/middlewares/auth.js'),
+        this.destinationPath('auth.js')
+      )
+
+      this.destinationRoot(path.resolve('..', 'models'))
+      this.fs.copyTpl(
+        this.templatePath('./src/app/models/UserModel.js'),
+        this.destinationPath('UserModel.js')
+      )
+
+      this.destinationRoot(path.resolve('..', 'validators'))
+      this.fs.copyTpl(
+        this.templatePath('./src/app/validators/UserValidator.js'),
+        this.destinationPath('UserValidator.js')
+      )
+    }
   }
 
   _private_config() {
@@ -209,9 +177,11 @@ module.exports = class extends Generator {
       this.destinationPath('databaseConfig.js')
     )
 
-    this.fs.copyTpl(
-      this.templatePath('./config/authConfig.js'),
-      this.destinationPath('authConfig.js')
-    )
+    if (this.answers.login) {
+      this.fs.copyTpl(
+        this.templatePath('./config/authConfig.js'),
+        this.destinationPath('authConfig.js')
+      )
+    }
   }
 };

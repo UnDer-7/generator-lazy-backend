@@ -12,9 +12,28 @@ class UserController {
     return res.json(userRes)
   }
 
-  async getAllUsers (req, res) {
-    const userRes = await UserModel.find()
+  async updateUser (req, res) {
+    const userRes = await UserModel.findOneAndUpdate(req.params.id, req.body, { new: true })
     return res.json(userRes)
+  }
+
+  async getAllUser (req, res) {
+    const userRes = await UserModel.paginate({}, {
+      page: req.query.page || 1,
+      limit: 20,
+      sort: '-createdAt'
+    })
+    res.json({ userRes })
+  }
+
+  async getUser (req, res) {
+    const userRes = await UserModel.findOneById(req.params.id)
+    return res.json(userRes)
+  }
+
+  async deleteUser (req, res) {
+    await UserModel.findByIdAndDelete(req.params.id)
+    return res.send()
   }
 }
 module.exports = new UserController()
