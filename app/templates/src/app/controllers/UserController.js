@@ -36,7 +36,7 @@ class UserController {
   }
 
   async getUser (req, res) {
-    const userRes = await UserModel.findOneById(req.params.id)
+    const userRes = await UserModel.findById(req.params.id)
     return res.json(userRes)
   }
 
