@@ -16,7 +16,7 @@ routes.post(`${rootUrl}/login`, validate(validators.UserValidator), handle(contr
 routes.use(authMiddleware)
 
 /**
- *  USER ENTITY
+ *  USER'S ROUTES
  */
 routes.put(`${rootUrl}/user/:id`, validate(validators.UserValidator), handle(controllers.UserController.updateUser))
 routes.get(`${rootUrl}/users`, handle(controllers.UserController.getAllUser))
