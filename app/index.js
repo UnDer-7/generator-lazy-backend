@@ -3,33 +3,19 @@ const Generator = require('yeoman-generator')
 const path = require('path')
 const chalk = require('chalk')
 
+const project = require('./generator/questions/project')
+
 module.exports = class extends Generator {
-  constructor(args, opts) {
-    super(args, opts);
+  constructor (args, opts) {
+    super(args, opts)
     this.log(chalk.red.bgBlack('\n------------------------------'))
     this.log(chalk.red.bgBlack('---------LAZY-BACKEND---------'))
     this.log(chalk.red.bgBlack('-----------REST-API-----------'))
     this.log(('\nInitializing the lazy-backend\n'))
   }
 
-  async prompting() {
-    this.answers = await this.prompt([
-      {
-        type: 'input',
-        name: 'projectName',
-        message: `What's the project's name?`
-      },
-      {
-        type: 'input',
-        name: 'databaseName',
-        message: `What's the database's name?`
-      },
-      {
-        type: 'confirm',
-        name: 'login',
-        message: `Would you like to use JWT validation?`
-      }
-    ])
+  async prompting () {
+    this.answers = await this.prompt(project)
 
     this.npm = await this.prompt([
       {
@@ -40,7 +26,7 @@ module.exports = class extends Generator {
     ])
   }
 
-  start() {
+  start () {
     this._private_src()
     this._private_settings()
     this._private_entity()
@@ -51,7 +37,7 @@ module.exports = class extends Generator {
     }
   }
 
-  _private_src() {
+  _private_src () {
     this.destinationRoot(path.resolve(this.answers.projectName, 'src'))
     this.fs.copyTpl(
       this.templatePath('./src/server.js'),
@@ -72,14 +58,14 @@ module.exports = class extends Generator {
     )
   }
 
-  _private_settings() {
+  _private_settings () {
     this.destinationRoot(path.resolve('..'))
     this.fs.copyTpl(
       this.templatePath('./.editorconfig'),
       this.destinationPath('.editorconfig')
     )
 
-    const randomNuber = Math.floor(Math.random() * 10000000);
+    const randomNuber = Math.floor(Math.random() * 10000000)
 
     this.fs.copyTpl(
       this.templatePath('./.env'),
@@ -119,7 +105,7 @@ module.exports = class extends Generator {
     )
   }
 
-  _private_entity() {
+  _private_entity () {
     this.destinationRoot(path.resolve('src', 'app', 'controllers'))
     this.fs.copyTpl(
       this.templatePath('./src/app/controllers/index.js'),
@@ -170,7 +156,7 @@ module.exports = class extends Generator {
     }
   }
 
-  _private_config() {
+  _private_config () {
     this.destinationRoot(path.resolve('..', '..', 'config'))
     this.fs.copyTpl(
       this.templatePath('./config/databaseConfig.js'),
@@ -184,4 +170,4 @@ module.exports = class extends Generator {
       )
     }
   }
-};
+}
