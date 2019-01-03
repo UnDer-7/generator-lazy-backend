@@ -1,7 +1,7 @@
 {
   "name": "generator-lazy-backend",
   "version": "1.0.0",
-  "description": "yeoman generator for those how are to lazy to make a simple nodeJS backend",
+  "description": "A simple generator to create a backend using NodeJS, Express.js and Mongoose",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
