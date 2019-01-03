@@ -61,14 +61,14 @@ module.exports = class extends Generator {
   _private_settings () {
     this.destinationRoot(path.resolve('..'))
     this.fs.copyTpl(
-      this.templatePath('./.editorconfig'),
+      this.templatePath('./editorconfig'),
       this.destinationPath('.editorconfig')
     )
 
     const randomNuber = Math.floor(Math.random() * 10000000)
 
     this.fs.copyTpl(
-      this.templatePath('./.env'),
+      this.templatePath('./env'),
       this.destinationPath('.env'),
       {
         db: this.answers.databaseName,
@@ -78,12 +78,12 @@ module.exports = class extends Generator {
     )
 
     this.fs.copyTpl(
-      this.templatePath('./.eslintrc.js'),
+      this.templatePath('./eslintrc.js'),
       this.destinationPath('.eslintrc.js')
     )
 
     this.fs.copyTpl(
-      this.templatePath('./.gitignore'),
+      this.templatePath('./gitignore'),
       this.destinationPath('.gitignore')
     )
 
