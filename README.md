@@ -116,4 +116,5 @@ You can access it's [GitHub](https://github.com/UnDer-7/generator-lazy-backend-e
   2. nodemon
      - Restarts the application when a file change occurs
      - [npm](https://www.npmjs.com/package/nodemon)
-  
+  ## Author
+Mateus Gomems da Silva Cardoso | mateus7532@gmail.com
