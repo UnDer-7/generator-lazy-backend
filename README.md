@@ -42,7 +42,7 @@ npm start
 
 **The MongoDB port by default is 27017, if you use a diferent port you can change it on .env file**
 ## Entity Generator
-This generator creates only the base project. There is an entity generator available for you.
+This generator creates only the base project. There is an [entity generator](https://github.com/UnDer-7/generator-lazy-backend-entity) available for you.
 
 You can install the package from npm
 ```
