@@ -49,7 +49,10 @@ You can install the package from npm
 npm i -g generator-lazy-backend-entity
 ```
 You can access it's [GitHub](https://github.com/UnDer-7/generator-lazy-backend-entity) to learn how to use it
-## project struct
+
+## Video exemple
+![Fail to load the video](https://media.giphy.com/media/pG0eGsJxneE0GZWSYm/giphy.gif)
+## Project struct
 *[+] indicates that it is a folder*
 ```
 |-- Project-Name[+]
