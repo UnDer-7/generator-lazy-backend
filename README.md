@@ -5,7 +5,7 @@ This generator is highly inspired by JHipster
 
 There is an [entity generator](https://github.com/UnDer-7/generator-lazy-backend-entity) available as well
 ## Video exemple
-![Fail to load the video](https://media.giphy.com/media/pG0eGsJxneE0GZWSYm/giphy.gif)
+![Fail to load the video](https://media.giphy.com/media/62789RPCUl8xGsoWMA/giphy.gif)
 ## About the project
 ### Database
 The project is using MongoDB as its database
