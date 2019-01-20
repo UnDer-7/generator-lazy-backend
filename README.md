@@ -4,6 +4,8 @@ A simple generator to create a backend using NodeJS, Express.js and Mongoose
 This generator is highly inspired by JHipster
 
 There is an [entity generator](https://github.com/UnDer-7/generator-lazy-backend-entity) available as well
+## Video exemple
+![Fail to load the video](https://media.giphy.com/media/pG0eGsJxneE0GZWSYm/giphy.gif)
 ## About the project
 ### Database
 The project is using MongoDB as its database
@@ -49,9 +51,6 @@ You can install the package from npm
 npm i -g generator-lazy-backend-entity
 ```
 You can access it's [GitHub](https://github.com/UnDer-7/generator-lazy-backend-entity) to learn how to use it
-
-## Video exemple
-![Fail to load the video](https://media.giphy.com/media/pG0eGsJxneE0GZWSYm/giphy.gif)
 ## Project struct
 *[+] indicates that it is a folder*
 ```
