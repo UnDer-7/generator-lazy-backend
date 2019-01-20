@@ -1,6 +1,6 @@
 {
   "name": "generator-lazy-backend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple generator to create a backend using NodeJS, Express.js and Mongoose",
   "main": "index.js",
   "homepage": "https://github.com/UnDer-7/generator-lazy-backend#readme",
