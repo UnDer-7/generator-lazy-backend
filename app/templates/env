@@ -1,4 +1,4 @@
-NODE_ENV=devolopment
+NODE_ENV=development
 <%if (login) { %>
 APP_SECRET=<%= appSecret %>
 <% } %>
