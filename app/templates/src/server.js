@@ -1,22 +1,25 @@
+'use strict'
+
 require('dotenv').config()
 
 const express = require('express')
 const validate = require('express-validation')
-const mongoose = require('mongoose')
+const logger = require('morgan')
 const Youch = require('youch')
-
+<%if (db === 'mongo') { %>
+const mongoose = require('mongoose')
 const databaseConfig = require('./config/databaseConfig')
-
+<% } %>
 class App {
   constructor () {
     this.express = express()
-
-    this.database()
+<%if (db === 'mongo') { %>
+    this.database() <% } %>
     this.middleware()
     this.routes()
     this.exception()
   }
-
+<%if (db === 'mongo') { %>
   database () {
     mongoose.connect(databaseConfig.uri, {
       useCreateIndex: true,
@@ -24,8 +27,10 @@ class App {
     })
     mongoose.set('debug', true)
   }
-
+<% } %>
   middleware () {
+    this.express.use(logger('dev'))
+    this.express.disable('x-powered-by')
     this.express.use(express.json())
   }
 

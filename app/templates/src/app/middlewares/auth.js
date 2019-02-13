@@ -1,3 +1,5 @@
+'use strict'
+
 const jwt = require('jsonwebtoken')
 const authConfig = require('../../config/authConfig')
 const { promisify } = require('util')

@@ -10,7 +10,7 @@ const projectOptions = [
   },
   {
     type: 'list',
-    name: 'projectStyle',
+    name: 'databaseStyle',
     message: 'What kind of database would you like to use?',
     choices: [
       {

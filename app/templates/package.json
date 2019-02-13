@@ -16,19 +16,23 @@
     "express": "^4.16.4",
     "express-async-handler": "^1.1.4",
     "express-validation": "^1.0.2",
-    "joi": "^14.3.0",
+    "joi": "^14.3.0",<%if (db === 'mongo') { %>
     "mongoose": "^5.4.0",
-    "mongoose-paginate": "^5.0.3",
+    "mongoose-paginate": "^5.0.3", <% } else { %>
+    "pg": "^7.8.0",
+    "sequelize": "^4.42.0",
+    "sequelize-paginate": "^1.1.4", <% } %>
+    "morgan": "^1.9.1",
     "require-dir": "^1.2.0",
     "youch": "^2.0.10"
   },
   "devDependencies": {
-    "eslint": "^5.10.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^8.0.0",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
+  "eslint": "^5.13.0",
+  "eslint-config-standard": "^12.0.0",
+  "eslint-plugin-import": "^2.16.0",
+  "eslint-plugin-node": "^8.0.1",
+  "eslint-plugin-promise": "^4.0.1",
+  "eslint-plugin-standard": "^4.0.0",
     "nodemon": "^1.18.8"
   }
 }

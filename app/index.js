@@ -14,6 +14,9 @@ module.exports = class extends Generator {
     this.log(('\nInitializing the lazy-backend\n'))
   }
 
+  /**
+   * Ask all the questions to the user
+   */
   async prompting () {
     this.answers = await this.prompt(project)
 
@@ -26,6 +29,9 @@ module.exports = class extends Generator {
     ])
   }
 
+  /**
+   * Call all method to generate the project
+   */
   start () {
     this._private_src()
     this._private_settings()
@@ -37,11 +43,21 @@ module.exports = class extends Generator {
     }
   }
 
+  /**
+   * Creates all files inside the src folder
+   * files-created
+   *  server.js
+   *  routes.js
+   *  index.js
+   */
   _private_src () {
     this.destinationRoot(path.resolve(this.answers.projectName, 'src'))
     this.fs.copyTpl(
       this.templatePath('./src/server.js'),
-      this.destinationPath('server.js')
+      this.destinationPath('server.js'),
+      {
+        db: this.answers.databaseStyle
+      }
     )
 
     this.fs.copyTpl(
@@ -58,6 +74,15 @@ module.exports = class extends Generator {
     )
   }
 
+  /**
+   * Creates all settings files
+   * files-created
+   *  editorconfig
+   *  env
+   *  eslintrc
+   *  gitignore
+   *  package
+   */
   _private_settings () {
     this.destinationRoot(path.resolve('..'))
     this.fs.copyTpl(
@@ -65,21 +90,20 @@ module.exports = class extends Generator {
       this.destinationPath('.editorconfig')
     )
 
-    const randomNuber = Math.floor(Math.random() * 10000000)
-
     this.fs.copyTpl(
       this.templatePath('./env'),
       this.destinationPath('.env'),
       {
-        db: this.answers.databaseName,
-        appSecret: randomNuber,
-        login: this.answers.login
+        dbName: this.answers.databaseName,
+        appSecret: this._private_token_secret(),
+        login: this.answers.login,
+        db: this.answers.databaseStyle
       }
     )
 
     this.fs.copyTpl(
-      this.templatePath('./eslintrc.js'),
-      this.destinationPath('.eslintrc.js')
+      this.templatePath('./eslintrc.json'),
+      this.destinationPath('.eslintrc.json')
     )
 
     this.fs.copyTpl(
@@ -92,17 +116,29 @@ module.exports = class extends Generator {
       this.destinationPath('package.json'),
       {
         project: this.answers.projectName,
-        login: this.answers.login
+        login: this.answers.login,
+        db: this.answers.databaseStyle
       }
     )
 
-    this.fs.copyTpl(
-      this.templatePath('./package-lock.json'),
-      this.destinationPath('package-lock.json'),
-      {
-        project: this.answers.projectName
-      }
-    )
+    // this.fs.copyTpl(
+    //   this.templatePath('./package-lock.json'),
+    //   this.destinationPath('package-lock.json'),
+    //   {
+    //     project: this.answers.projectName
+    //   }
+    // )
+  }
+
+  /**
+   * Generate the token secret
+   */
+  _private_token_secret () {
+    let text = ''
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+    for (let i = 0; i < 25; i++) text += possible.charAt(Math.floor(Math.random() * possible.length))
+    console.log('token', text)
   }
 
   _private_entity () {

@@ -69,7 +69,7 @@ You can access it's [GitHub](https://github.com/UnDer-7/generator-lazy-backend-e
   |-- package-lock.json
   |-- .editorconfig
   |-- .env
-  |-- .eslintrc.js
+  |-- .eslintrc.json
   |-- .gitignore
   ```
   If you want to check how the genereted project is, you can check this [github](https://github.com/UnDer-7/template-project)
