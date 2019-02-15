@@ -12,7 +12,7 @@ const authMiddleware = require('./app/middlewares/auth')
 <% } %>
 const rootUrl = '/api'
 <%if (login) { %>
-routes.post(`${rootUrl}/login`, validate(validators.UserValidator), handle(controllers.SessionController.generateToken))
+routes.post(`${rootUrl}/login`, validate(validators.UserValidator), handle(controllers.SessionController.login))
 routes.post(`${rootUrl}/user`, validate(validators.UserValidator), handle(controllers.UserController.createUser))
 
 routes.use(authMiddleware)

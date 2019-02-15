@@ -21,7 +21,7 @@ class App {
   }
 <%if (db === 'mongo') { %>
   database () {
-    mongoose.connect(databaseConfig.uri, {
+    mongoose.connect(process.env.DB_URL, {
       useCreateIndex: true,
       useNewUrlParser: true
     })

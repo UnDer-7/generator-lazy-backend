@@ -2,15 +2,26 @@
 const Generator = require('yeoman-generator')
 const path = require('path')
 const chalk = require('chalk')
+const cmd = require('child_process')
 
+const shellHelper = require('./generator/shellHelper/shellHelper')
 const project = require('./generator/questions/project')
+
+const dash = chalk.green.bgBlack
+const initalText = chalk.red.bgBlack
+const sequelizeCMD = chalk.greenBright
+const error = chalk.red
 
 module.exports = class extends Generator {
   constructor (args, opts) {
     super(args, opts)
-    this.log(chalk.red.bgBlack('\n------------------------------'))
-    this.log(chalk.red.bgBlack('---------LAZY-BACKEND---------'))
-    this.log(chalk.red.bgBlack('-----------REST-API-----------'))
+
+    const lazyBackend = dash('---------') + initalText('LAZY-BACKEND') + dash('---------')
+    const restAPI = dash('-----------') + initalText('REST-API') + dash('-----------')
+    this.log(dash('\n------------------------------'))
+    this.log(lazyBackend)
+    this.log(restAPI)
+    this.log(dash('------------------------------'))
     this.log(('\nInitializing the lazy-backend\n'))
   }
 
@@ -20,13 +31,7 @@ module.exports = class extends Generator {
   async prompting () {
     this.answers = await this.prompt(project)
 
-    this.npm = await this.prompt([
-      {
-        type: 'confirm',
-        name: 'npmI',
-        message: 'Would you like to run npm install?'
-      }
-    ])
+    // this.npm = await this.prompt(after)
   }
 
   /**
@@ -36,19 +41,26 @@ module.exports = class extends Generator {
     this._private_src()
     this._private_settings()
     this._private_entity()
-    this._private_config()
 
-    if (this.npm.npmI) {
+    if (this.answers.databaseStyle === 'sql') this._private_sequelize_config()
+
+    if (this.answers.npmI) {
       this.npmInstall()
     }
+
+    // this._private_sequelize_commands()
+  }
+
+  end () {
+    this._private_sequelize_commands()
   }
 
   /**
    * Creates all files inside the src folder
-   * files-created
-   *  server.js
-   *  routes.js
-   *  index.js
+   * ## files-created
+   *  - server.js
+   *  - routes.js
+   *  - index.js
    */
   _private_src () {
     this.destinationRoot(path.resolve(this.answers.projectName, 'src'))
@@ -76,12 +88,12 @@ module.exports = class extends Generator {
 
   /**
    * Creates all settings files
-   * files-created
-   *  editorconfig
-   *  env
-   *  eslintrc
-   *  gitignore
-   *  package
+   * ## files-created
+   *  - editorconfig
+   *  - env
+   *  - eslintrc
+   *  - gitignore
+   *  - package
    */
   _private_settings () {
     this.destinationRoot(path.resolve('..'))
@@ -95,7 +107,7 @@ module.exports = class extends Generator {
       this.destinationPath('.env'),
       {
         dbName: this.answers.databaseName,
-        appSecret: this._private_token_secret(),
+        appSecret: this._private_generate_random_number(),
         login: this.answers.login,
         db: this.answers.databaseStyle
       }
@@ -131,16 +143,16 @@ module.exports = class extends Generator {
   }
 
   /**
-   * Generate the token secret
+   * Creates all files inside the app folder.
+   * If JWT option was selected it will create the user entity.
+   * ## files-created
+   *  - index.js
+   *  - UserController.js (if JWT option was selected)
+   *  - SessionController.js (if JWT option was selected)
+   *  - auth.js (if JWT option was selected)
+   *  - User.js (if JWT option was selected)
+   *  - UserValidator (if JWT option was selected)
    */
-  _private_token_secret () {
-    let text = ''
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-
-    for (let i = 0; i < 25; i++) text += possible.charAt(Math.floor(Math.random() * possible.length))
-    console.log('token', text)
-  }
-
   _private_entity () {
     this.destinationRoot(path.resolve('src', 'app', 'controllers'))
     this.fs.copyTpl(
@@ -150,7 +162,8 @@ module.exports = class extends Generator {
 
     this.destinationRoot(path.resolve('..', 'models'))
     this.fs.copyTpl(
-      this.templatePath('./src/app/models/index.js'),
+      this.templatePath(this.answers.databaseStyle === 'mongo'
+        ? './src/app/models/noSQL/index.js' : './src/app/models/sql/index.js'),
       this.destinationPath('index.js')
     )
 
@@ -163,12 +176,14 @@ module.exports = class extends Generator {
     if (this.answers.login) {
       this.destinationRoot(path.resolve('..', 'controllers'))
       this.fs.copyTpl(
-        this.templatePath('./src/app/controllers/UserController.js'),
+        this.templatePath(this.answers.databaseStyle === 'mongo'
+          ? './src/app/controllers/noSQL/UserController.js' : './src/app/controllers/sql/UserController.js'),
         this.destinationPath('UserController.js')
       )
 
       this.fs.copyTpl(
-        this.templatePath('./src/app/controllers/SessionController.js'),
+        this.templatePath(this.answers.databaseStyle === 'mongo'
+          ? './src/app/controllers/noSQL/SessionController.js' : './src/app/controllers/sql/SessionController.js'),
         this.destinationPath('SessionController.js')
       )
 
@@ -180,8 +195,9 @@ module.exports = class extends Generator {
 
       this.destinationRoot(path.resolve('..', 'models'))
       this.fs.copyTpl(
-        this.templatePath('./src/app/models/UserModel.js'),
-        this.destinationPath('UserModel.js')
+        this.templatePath(this.answers.databaseStyle === 'mongo'
+          ? './src/app/models/noSQL/User.js' : './src/app/models/sql/User.js'),
+        this.destinationPath('User.js')
       )
 
       this.destinationRoot(path.resolve('..', 'validators'))
@@ -192,18 +208,91 @@ module.exports = class extends Generator {
     }
   }
 
-  _private_config () {
+  /**
+   * Creates all files inside the database folder, only if the database is SQL.
+   * If JWT option was selected it will create the user's migrations.
+   * ## files-created
+   *  - databaseConfig.js
+   *  - sequelizerc
+   *  - 20190207222756-create-user.js (if JWT option was selected)
+   */
+  _private_sequelize_config () {
     this.destinationRoot(path.resolve('..', '..', 'config'))
     this.fs.copyTpl(
-      this.templatePath('./config/databaseConfig.js'),
-      this.destinationPath('databaseConfig.js')
+      this.templatePath('./src/config/databaseConfig.js'),
+      this.destinationPath('databaseConfig.js'),
+      {
+        dbName: this.answers.databaseName,
+        username: this.answers.username,
+        password: this.answers.password,
+        db: this.answers.sqlDB,
+        port: this.answers.host
+      }
     )
 
+    this.destinationRoot(path.resolve('..', 'database'))
+
+    this.destinationRoot(path.resolve('migrations'))
     if (this.answers.login) {
       this.fs.copyTpl(
-        this.templatePath('./config/authConfig.js'),
-        this.destinationPath('authConfig.js')
+        this.templatePath('./src/database/migrations/20190207222756-create-user.js'),
+        this.destinationPath(this._private_generate_date_time() + '-create-user.js')
       )
     }
+    this.destinationRoot(path.resolve('..', 'seeders'))
+
+    this.destinationRoot(path.resolve('..', '..', '..'))
+    this.fs.copyTpl(
+      this.templatePath('./sequelizerc'),
+      this.destinationPath('.sequelizerc')
+    )
+  }
+
+  _private_sequelize_commands () {
+    this.log(sequelizeCMD('\n------------------------------'))
+    this.log(sequelizeCMD('CREATING DATABASE!'))
+    this.log(sequelizeCMD('------------------------------\n'))
+    cmd.exec('npx sequelize db:create', { cwd: this.destinationRoot('./') }, (e, stdout, stderr, cwd) => {
+      if (e instanceof Error) {
+        console.error(error(e))
+        throw e
+      }
+      console.log('stdout ', stdout)
+      console.log('stderr ', stderr)
+      this.log(sequelizeCMD('\n------------------------------'))
+      this.log(sequelizeCMD('DATABASE CREATED!'))
+      this.log(sequelizeCMD('------------------------------\n'))
+    })
+    // shellHelper.exec('npx sequelize db:create', `${this.answers.projectName}/`, err => console.error(err))
+  }
+
+  /**
+   * Generates a random string
+   * @param {Number}size - (default value: 25). Set size of the generated string.
+   * @param letters - boolean (default value: true). If false will generated a
+   * string containing only numbers, other wise a string with numbers and letters.
+   * @return The generated string
+   */
+  _private_generate_random_number (size = 25, letters = true) {
+    let text = ''
+    const possible = letters ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' : '0123456789'
+
+    for (let i = 0; i < size; i++) text += possible.charAt(Math.floor(Math.random() * possible.length))
+    return text
+  }
+
+  /**
+   * Generates a string containing the date and hour.
+   * format: month, date, year, hours, minutes and seconds
+   * @return - string - ex: 2132019212724
+   */
+  _private_generate_date_time () {
+    let currentdate = new Date()
+    return '' + (currentdate.getMonth() + 1) +
+      currentdate.getDate() +
+      currentdate.getFullYear() +
+      currentdate.getHours() +
+      currentdate.getMinutes() +
+      currentdate.getSeconds()
   }
 }

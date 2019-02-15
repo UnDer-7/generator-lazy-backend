@@ -1,22 +1,22 @@
 'use strict'
 
-const UserModel = require('../models/UserModel')
+const User = require('../models/User')
 
 class UserController {
   async createUser (req, res) {
     const { login } = req.body
 
-    if (await UserModel.findOne({ login })) {
+    if (await User.findOne({ login })) {
       return res.status(400).json({ error: 'User already exists' })
     }
 
-    const userRes = await UserModel.create(req.body)
-    return res.json(userRes)
+    const user = await User.create(req.body)
+    return res.json(user)
   }
 
   async updateUser (req, res) {
     const { login, password } = req.body
-    await UserModel.findById(req.params.id, (err, user) => {
+    await User.findById(req.params.id, (err, user) => {
       if (err) return res.status(500).json({ error: 'Unable to update the document', err })
 
       user.login = login
@@ -29,21 +29,21 @@ class UserController {
   }
 
   async getAllUser (req, res) {
-    const userRes = await UserModel.paginate({}, {
+    const user = await User.paginate({}, {
       page: req.query.page || 1,
       limit: 20,
       sort: '-createdAt'
     })
-    res.json({ userRes })
+    res.json({ user })
   }
 
   async getUser (req, res) {
-    const userRes = await UserModel.findById(req.params.id)
-    return res.json(userRes)
+    const user = await User.findById(req.params.id)
+    return res.json(user)
   }
 
   async deleteUser (req, res) {
-    await UserModel.findByIdAndDelete(req.params.id)
+    await User.findByIdAndDelete(req.params.id)
     return res.send()
   }
 }

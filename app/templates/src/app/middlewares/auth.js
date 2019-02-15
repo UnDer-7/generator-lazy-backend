@@ -1,23 +1,20 @@
 'use strict'
 
 const jwt = require('jsonwebtoken')
-const authConfig = require('../../config/authConfig')
 const { promisify } = require('util')
 
 module.exports = async (req, res, next) => {
   const authHeader = req.headers.authorization
 
-  if (!authHeader) {
-    return res.status(401).json({ error: 'Token not found' })
-  }
+  if (!authHeader) return res.status(401).json({ error: 'Token not found' })
 
   const [, token] = authHeader.split(' ')
   try {
-    const decoded = await promisify(jwt.verify)(token, authConfig.secret)
-    req.templateId = decoded.id
+    const decoded = await promisify(jwt.verify)(token, process.env.APP_SECRET)
+    // req.templateId = decoded.id --> set user's id in the requisition
+    return next()
   } catch (e) {
     res.status(400).json({ error: e })
   }
 
-  return next()
 }
