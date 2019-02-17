@@ -8,7 +8,6 @@ const logger = require('morgan')
 const Youch = require('youch')
 <%if (db === 'mongo') { %>
 const mongoose = require('mongoose')
-const databaseConfig = require('./config/databaseConfig')
 <% } %>
 class App {
   constructor () {

@@ -36,7 +36,7 @@ UserSchema.methods = {
 
 UserSchema.statics = {
   createToken ({ id }) {
-    return jwt.sign({ data: id }, authprocess.env.APP_SECRET, { expiresIn: '1h' })
+    return jwt.sign({ data: id }, process.env.APP_SECRET, { expiresIn: '1h' })
   }
 }
 

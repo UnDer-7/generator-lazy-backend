@@ -1,3 +1,10 @@
+const { snakeCase } = require('lodash')
+const chalk = require('chalk')
+
+const dash = chalk.green
+const warning = chalk.keyword('orange')
+const questionMark = chalk.green
+
 const projectOptions = [
   {
     type: 'input',
@@ -57,11 +64,7 @@ const projectOptions = [
     name: 'databaseName',
     message: `What's the database's name?`,
     default: function (response) {
-      // Converts CamelCase to underscore_case and uppercase
-      return response.projectName.replace(
-        /\.?([A-Z]+)/g, (x, y) => {
-          return '_' + y
-        }).replace(/^_/, '').toUpperCase()
+      return snakeCase(response.projectName).toUpperCase()
     },
     validate: function (response) {
       if (!response) return `Database name can't be blank`
@@ -70,10 +73,11 @@ const projectOptions = [
     }
   },
   {
-    when: response => response.sqlDB !== 'sqlite',
+    when: response => response.sqlDB !== 'sqlite' && response.databaseStyle !== 'mongo',
     type: 'confirm',
     name: 'dbConfig',
-    message: `Would you like to configure your database?\n (Username, Password and Host)`
+    message: `Would you like to configure your database? `,
+    suffix: `${warning('(Username, Password and Host)')}\n`
   },
   {
     when: response => response.dbConfig && response.sqlDB !== 'sqlite',
@@ -114,14 +118,24 @@ const projectOptions = [
   {
     type: 'confirm',
     name: 'npmI',
-    message: 'Would you like to run npm install?'
+    message: 'Would you like to run npm install?',
+    color: 'red'
   },
-  // TODO: ASK THE REST AND TO THE CONDITIONS
   {
-    when: response => !(response.npmI && response.databaseStyle === 'slq'),
-    type: 'input',
-    name: 'migrate:db',
-    message: `Whould you like to create your database?`
+    when: response => {
+      return (response.npmI && response.databaseStyle !== 'mongo')
+    },
+    type: 'confirm',
+    name: 'createDB',
+    message: `Would you like to create your database?`,
+    prefix: warning(`\n${dash('------------------------------')}\nFOR ALL THE NEXT QUESTIONS YOUR DATABASE MUST BE RUNNING!!\n${dash('------------------------------')}\n\n${questionMark('?')}`)
+  },
+  {
+    when: response => response.createDB && response.login,
+    type: 'confirm',
+    name: 'createTable',
+    message: `Would you like to create the User's table?`,
+    suffix: `\n${warning(' It\'s recommend when using JWT validation')}\n`
   }
 ]
 module.exports = projectOptions

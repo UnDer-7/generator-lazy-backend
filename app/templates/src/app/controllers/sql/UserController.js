@@ -10,7 +10,7 @@ class UserController {
       const user = await User.create(req.body)
       return res.status('201').json(user)
     } catch (e) {
-      return res.status('400').json({ error: e })
+      return res.status('500').json({ error: e })
     }
   }
 
@@ -24,7 +24,7 @@ class UserController {
         })
       res.status(updatedUser ? '201' : '404').json(updatedUser)
     } catch (e) {
-      res.status('400').json({ error: e })
+      res.status('500').json({ error: e })
     }
   }
 
@@ -40,7 +40,7 @@ class UserController {
       const { docs, pages, total } = await User.paginate(options)
       return res.status('200').json({ docs, pages: pages, total: total })
     } catch (e) {
-      return res.status('400').json({ error: e })
+      return res.status('500').json({ error: e })
     }
   }
 
@@ -49,7 +49,7 @@ class UserController {
       const user = await User.findByPk(req.params.id)
       return res.status(user ? '200' : '404').json(user)
     } catch (e) {
-      return res.status('400').json({ error: e })
+      return res.status('500').json({ error: e })
     }
   }
 
@@ -61,7 +61,7 @@ class UserController {
       })
       return res.status(user ? '200' : '400').json({ rowsDeleted: user })
     } catch (e) {
-      return res.status('400').json({ error: e })
+      return res.status('500').json({ error: e })
     }
   }
 }

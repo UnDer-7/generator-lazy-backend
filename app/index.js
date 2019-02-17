@@ -2,14 +2,14 @@
 const Generator = require('yeoman-generator')
 const path = require('path')
 const chalk = require('chalk')
-const cmd = require('child_process')
-
-const shellHelper = require('./generator/shellHelper/shellHelper')
+const util = require('util')
+const cmd = util.promisify(require('child_process').exec)
+const _ = require('lodash')
 const project = require('./generator/questions/project')
 
-const dash = chalk.green.bgBlack
-const initalText = chalk.red.bgBlack
-const sequelizeCMD = chalk.greenBright
+const dash = chalk.green
+const initalText = chalk.red
+const greenText = chalk.greenBright
 const error = chalk.red
 
 module.exports = class extends Generator {
@@ -30,14 +30,13 @@ module.exports = class extends Generator {
    */
   async prompting () {
     this.answers = await this.prompt(project)
-
-    // this.npm = await this.prompt(after)
   }
 
   /**
    * Call all method to generate the project
    */
   start () {
+    this.rootPath = null
     this._private_src()
     this._private_settings()
     this._private_entity()
@@ -47,12 +46,45 @@ module.exports = class extends Generator {
     if (this.answers.npmI) {
       this.npmInstall()
     }
-
-    // this._private_sequelize_commands()
   }
 
-  end () {
-    this._private_sequelize_commands()
+  async end () {
+    try {
+      const { stdout, stderr } = await this._private_create_git_repo()
+      console.log('stdout ', greenText(stdout))
+      console.log('stderr ', stderr)
+    } catch (e) {
+      console.log(error(e))
+      throw error(e)
+    }
+
+    if (this.answers.createDB) {
+      try {
+        const { stdout, stderr } = await this._private_create_database()
+        console.log('stdout ', greenText(stdout))
+        console.log('stderr ', stderr)
+        this.log(greenText('\n------------------------------'))
+        this.log(greenText('DATABASE CREATED!'))
+        this.log(greenText('------------------------------\n'))
+      } catch (e) {
+        console.error(error(e))
+        throw error(e)
+      }
+    }
+
+    if (this.answers.createDB && this.answers.createTable) {
+      try {
+        const { stdout, stderr } = await this._private_create_table()
+        console.log('stdout ', greenText(stdout))
+        console.log('stderr ', stderr)
+        this.log(greenText('\n------------------------------'))
+        this.log(greenText('TABLE CREATED!'))
+        this.log(greenText('------------------------------\n'))
+      } catch (e) {
+        console.error(error(e))
+        throw e
+      }
+    }
   }
 
   /**
@@ -61,6 +93,7 @@ module.exports = class extends Generator {
    *  - server.js
    *  - routes.js
    *  - index.js
+   *  @private
    */
   _private_src () {
     this.destinationRoot(path.resolve(this.answers.projectName, 'src'))
@@ -94,9 +127,10 @@ module.exports = class extends Generator {
    *  - eslintrc
    *  - gitignore
    *  - package
+   *  @private
    */
   _private_settings () {
-    this.destinationRoot(path.resolve('..'))
+    this.rootPath = this.destinationRoot(path.resolve('..'))
     this.fs.copyTpl(
       this.templatePath('./editorconfig'),
       this.destinationPath('.editorconfig')
@@ -152,6 +186,7 @@ module.exports = class extends Generator {
    *  - auth.js (if JWT option was selected)
    *  - User.js (if JWT option was selected)
    *  - UserValidator (if JWT option was selected)
+   *  @private
    */
   _private_entity () {
     this.destinationRoot(path.resolve('src', 'app', 'controllers'))
@@ -215,6 +250,7 @@ module.exports = class extends Generator {
    *  - databaseConfig.js
    *  - sequelizerc
    *  - 20190207222756-create-user.js (if JWT option was selected)
+   *  @private
    */
   _private_sequelize_config () {
     this.destinationRoot(path.resolve('..', '..', 'config'))
@@ -248,30 +284,61 @@ module.exports = class extends Generator {
     )
   }
 
-  _private_sequelize_commands () {
-    this.log(sequelizeCMD('\n------------------------------'))
-    this.log(sequelizeCMD('CREATING DATABASE!'))
-    this.log(sequelizeCMD('------------------------------\n'))
-    cmd.exec('npx sequelize db:create', { cwd: this.destinationRoot('./') }, (e, stdout, stderr, cwd) => {
-      if (e instanceof Error) {
-        console.error(error(e))
-        throw e
-      }
-      console.log('stdout ', stdout)
-      console.log('stderr ', stderr)
-      this.log(sequelizeCMD('\n------------------------------'))
-      this.log(sequelizeCMD('DATABASE CREATED!'))
-      this.log(sequelizeCMD('------------------------------\n'))
-    })
-    // shellHelper.exec('npx sequelize db:create', `${this.answers.projectName}/`, err => console.error(err))
+  /**
+   * Creates a new Git local repository
+   * @return {Promise} - Returns the child_process.exec()
+   * @private
+   */
+  _private_create_git_repo () {
+    return this._private_execute_command('git init')
+  }
+
+  /**
+   * Creates the Database
+   * @return {Promise} - Returns the child_process.exec()
+   * @private
+   */
+  _private_create_database () {
+    this.log(greenText('\n------------------------------'))
+    this.log('CREATING DATABASE!')
+    this.log(greenText('------------------------------\n'))
+
+    return this._private_execute_command('npx sequelize db:create')
+  }
+
+  /**
+   * Creates the user's table if the JWT validation
+   * was marked
+   * @return {Promise} - Returns the child_process.exec()
+   * @private
+   */
+  _private_create_table () {
+    this.log(greenText('\n------------------------------'))
+    this.log('CREATING USER\'S TABLE!')
+    this.log(greenText('------------------------------\n'))
+
+    return this._private_execute_command('npx sequelize db:migrate')
+  }
+
+  /**
+   * Run a command on the user's console.
+   * It'll execute the command inside the user's project folder
+   * @param command {String}
+   * @return
+   * @private
+   */
+  _private_execute_command (command) {
+    console.log(`Running ${greenText(command)} command`)
+    return cmd(command, { cwd: this.rootPath })
   }
 
   /**
    * Generates a random string
    * @param {Number}size - (default value: 25). Set size of the generated string.
-   * @param letters - boolean (default value: true). If false will generated a
+   * @param {Boolean}letters - (default value: true). If false will generated a
    * string containing only numbers, other wise a string with numbers and letters.
    * @return The generated string
+   * @private
    */
   _private_generate_random_number (size = 25, letters = true) {
     let text = ''
@@ -284,7 +351,8 @@ module.exports = class extends Generator {
   /**
    * Generates a string containing the date and hour.
    * format: month, date, year, hours, minutes and seconds
-   * @return - string - ex: 2132019212724
+   * @return {String} - ex: 2132019212724
+   * @private
    */
   _private_generate_date_time () {
     let currentdate = new Date()

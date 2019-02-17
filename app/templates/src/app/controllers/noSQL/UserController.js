@@ -4,22 +4,20 @@ const User = require('../models/User')
 
 class UserController {
   async createUser (req, res) {
-    const { login } = req.body
+    const { email } = req.body
 
-    if (await User.findOne({ login })) {
-      return res.status(400).json({ error: 'User already exists' })
-    }
+    if (await User.findOne({ email })) return res.status(400).json({ error: 'User already exists' })
 
     const user = await User.create(req.body)
-    return res.json(user)
+    return res.status('201').json(user)
   }
 
   async updateUser (req, res) {
-    const { login, password } = req.body
+    const { email, password } = req.body
     await User.findById(req.params.id, (err, user) => {
       if (err) return res.status(500).json({ error: 'Unable to update the document', err })
 
-      user.login = login
+      user.email = email
       user.password = password
       user.save((err, updatedUser) => {
         if (err) return res.status(500).json({ error: 'Unable to update the document', err })
