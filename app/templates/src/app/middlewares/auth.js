@@ -14,7 +14,7 @@ module.exports = async (req, res, next) => {
     // req.templateId = decoded.id --> set user's id in the requisition
     return next()
   } catch (e) {
+    console.trace(e)
     res.status(400).json({ error: e })
   }
-
 }

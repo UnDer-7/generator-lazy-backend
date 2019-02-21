@@ -36,7 +36,6 @@ module.exports = class extends Generator {
    * Call all method to generate the project
    */
   start () {
-    this.rootPath = null
     this._private_src()
     this._private_settings()
     this._private_entity()
@@ -166,14 +165,6 @@ module.exports = class extends Generator {
         db: this.answers.databaseStyle
       }
     )
-
-    // this.fs.copyTpl(
-    //   this.templatePath('./package-lock.json'),
-    //   this.destinationPath('package-lock.json'),
-    //   {
-    //     project: this.answers.projectName
-    //   }
-    // )
   }
 
   /**

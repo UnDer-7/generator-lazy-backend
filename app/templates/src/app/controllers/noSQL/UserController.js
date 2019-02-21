@@ -4,45 +4,66 @@ const User = require('../models/User')
 
 class UserController {
   async createUser (req, res) {
-    const { email } = req.body
-
-    if (await User.findOne({ email })) return res.status(400).json({ error: 'User already exists' })
-
-    const user = await User.create(req.body)
-    return res.status('201').json(user)
+    try {
+      if (await User.findOne({ where: req.body.email })) return res.status(400).json({ error: 'User already exists' })
+      const user = await User.create(req.body)
+      return res.status(201).json(user)
+    } catch (e) {
+      console.trace(e)
+      return res.status('500').json({ error: e })
+    }
   }
 
   async updateUser (req, res) {
-    const { email, password } = req.body
-    await User.findById(req.params.id, (err, user) => {
-      if (err) return res.status(500).json({ error: 'Unable to update the document', err })
+    try {
+      const { email, password } = req.body
+      const user = await User.findById(req.params.id)
+      if (!user) return res.status(400).json({ error: 'User not found' })
 
       user.email = email
       user.password = password
-      user.save((err, updatedUser) => {
-        if (err) return res.status(500).json({ error: 'Unable to update the document', err })
-        res.json(updatedUser)
-      })
-    })
+      const userRes = await user.save()
+      return res.status(200).json(userRes)
+    } catch (e) {
+      console.trace(e)
+      return res.status(500).json({ error: e })
+    }
   }
 
   async getAllUser (req, res) {
-    const user = await User.paginate({}, {
-      page: req.query.page || 1,
-      limit: 20,
-      sort: '-createdAt'
-    })
-    res.json({ user })
+    try {
+      const user = await User.paginate({}, {
+        page: req.query.page || 1,
+        limit: req.query.page || 25,
+        sort: req.query.sort || '-createdAt'
+      })
+      return res.status(200).json({ user })
+    } catch (e) {
+      console.trace(e)
+      return res.status(500).json({ error: e })
+    }
   }
 
   async getUser (req, res) {
-    const user = await User.findById(req.params.id)
-    return res.json(user)
+    try {
+      const user = await User.findById(req.params.id)
+      if (!user) return res.status(404).json({ error: 'User not found' })
+      return res.json(user)
+    } catch (e) {
+      console.trace(e)
+      res.status(500).json({ error: e })
+    }
   }
 
   async deleteUser (req, res) {
-    await User.findByIdAndDelete(req.params.id)
-    return res.send()
+    try {
+      const user = await User.findByIdAndDelete(req.params.id)
+      if (!user) return res.status(404).json({ error: 'User not found' })
+      return res.status(200).json(true)
+    } catch (e) {
+      console.trace(e)
+      res.status(500).json({ error: e })
+    }
   }
 }
 module.exports = new UserController()

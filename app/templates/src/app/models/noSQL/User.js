@@ -8,11 +8,16 @@ const paginate = require('mongoose-paginate')
 const UserSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: true
+    required: true,
+    unique: true,
+    trim: true,
+    minlength: [5, 'Minimum 5 characters']
   },
   password: {
     type: String,
-    required: true
+    required: true,
+    trim: true,
+    minlength: [5, 'Minimum 5 characters']
   },
   createdAt: {
     type: Date,

@@ -25,6 +25,8 @@ routes.get(`${rootUrl}/users`, handle(controllers.UserController.getAllUser))
 routes.get(`${rootUrl}/user/:id`, handle(controllers.UserController.getUser))
 routes.delete(`${rootUrl}/user/:id`, handle(controllers.UserController.deleteUser))
 <% } %>
+
 // Do not remove this cometary
 // ===== lazy-backend hook =====
+
 module.exports = routes
