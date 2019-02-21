@@ -5,7 +5,10 @@ const User = require('../models/User')
 class UserController {
   async createUser (req, res) {
     try {
-      if (await User.findOne({ where: req.body.email })) return res.status(400).json({ error: 'User already exists' })
+      if (await User.findOne({ where: req.body.email })) {
+        return res.status(400).json({ error: 'User already exists' })
+      }
+
       const user = await User.create(req.body)
       return res.status(201).json(user)
     } catch (e) {
@@ -18,7 +21,10 @@ class UserController {
     try {
       const { email, password } = req.body
       const user = await User.findById(req.params.id)
-      if (!user) return res.status(400).json({ error: 'User not found' })
+
+      if (!user) {
+        return res.status(400).json({ error: 'User not found' })
+      }
 
       user.email = email
       user.password = password
@@ -47,7 +53,11 @@ class UserController {
   async getUser (req, res) {
     try {
       const user = await User.findById(req.params.id)
-      if (!user) return res.status(404).json({ error: 'User not found' })
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' })
+      }
+
       return res.json(user)
     } catch (e) {
       console.trace(e)
@@ -58,7 +68,11 @@ class UserController {
   async deleteUser (req, res) {
     try {
       const user = await User.findByIdAndDelete(req.params.id)
-      if (!user) return res.status(404).json({ error: 'User not found' })
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' })
+      }
+
       return res.status(200).json(true)
     } catch (e) {
       console.trace(e)
