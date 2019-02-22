@@ -3,7 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const Sequelize = require('sequelize')
-const config = require('../../config/database.config.js')
+const config = require('../../config/databaseConfig.js')
 
 const db = {}
 const sequelize = new Sequelize(process.env.NODE_ENV === 'development' ? config.development : config.production)

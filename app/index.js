@@ -33,6 +33,7 @@ module.exports = class extends Generator {
   }
 
   /**
+   * - Yeoman Hook
    * Call all method to generate the project
    */
   start () {
@@ -47,6 +48,12 @@ module.exports = class extends Generator {
     }
   }
 
+  /**
+   * - Yeoman Hook
+   * This method is the last method to be executed.
+   * It creates git local repository and
+   * Database stuff if SQL is used.
+   */
   async end () {
     try {
       const { stdout, stderr } = await this._private_create_git_repo()
@@ -63,7 +70,7 @@ module.exports = class extends Generator {
         console.log('stdout ', greenText(stdout))
         console.log('stderr ', stderr)
         this.log(greenText('\n------------------------------'))
-        this.log(greenText('DATABASE CREATED!'))
+        this.log('DATABASE CREATED!')
         this.log(greenText('------------------------------\n'))
       } catch (e) {
         console.error(error(e))
@@ -77,7 +84,7 @@ module.exports = class extends Generator {
         console.log('stdout ', greenText(stdout))
         console.log('stderr ', stderr)
         this.log(greenText('\n------------------------------'))
-        this.log(greenText('TABLE CREATED!'))
+        this.log('TABLE CREATED!')
         this.log(greenText('------------------------------\n'))
       } catch (e) {
         console.error(error(e))

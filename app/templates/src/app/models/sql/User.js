@@ -1,6 +1,6 @@
 'use strict'
 
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcrypt')
 const sequelizePaginate = require('sequelize-paginate')
 const jwt = require('jsonwebtoken')
 

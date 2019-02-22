@@ -7,7 +7,7 @@ class UserController {
     try {
       const verify = await User.findOne({ where: { email: req.body.email } })
 
-      if (!verify) {
+      if (verify) {
         return res.status(400).json({ error: 'User already exists' })
       }
 
@@ -30,7 +30,7 @@ class UserController {
       res.status(updatedUser ? 200 : 404).json(updatedUser)
     } catch (e) {
       console.trace(e)
-      res.status(500).json({ error: e })
+      return res.status(500).json({ error: e })
     }
   }
 

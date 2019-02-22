@@ -6,8 +6,8 @@ module.exports = {
     password: '<%= password  %>',
     database: '<%= dbName  %>',
     host: 'localhost',
-    dialect: '<%= db  %>',
-    port: '<%= port  %>',
+    dialect: '<%= db  %>',<%if (port) { %>
+    port: '<%= port  %>', <% } %>
     operatorsAliases: false
   },
   test: {
