@@ -5,7 +5,7 @@ const User = require('../models/User')
 class UserController {
   async createUser (req, res) {
     try {
-      if (await User.findOne({ where: req.body.email })) {
+      if (await User.findOne({ email: req.body.email })) {
         return res.status(400).json({ error: 'User already exists' })
       }
 
