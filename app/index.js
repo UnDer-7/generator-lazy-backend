@@ -111,9 +111,9 @@ module.exports = class extends Generator {
       }
     }
 
-    console.log(chalk.cyanBright.bold('\nAuthor: Mateus Gomes da Silva Cardoso'))
     console.log(endingMessage(`\nIf you like lazy-backend project give it a star at GitHub`))
     console.log(urlGitHub(`https://github.com/UnDer-7/generator-lazy-backend`))
+    console.log(chalk.cyanBright.bold('\nAuthor: Mateus Gomes da Silva Cardoso'))
   }
 
   /**
