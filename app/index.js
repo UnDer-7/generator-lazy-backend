@@ -60,7 +60,7 @@ module.exports = class extends Generator {
   async end () {
     try {
       const { stdout } = await this._private_create_git_repo()
-      console.log('stdout ', greenText(stdout))
+      console.log('stdout ', greenText(stdout) + greenText('------------------------------\n'))
     } catch (e) {
       console.log(error(e))
       throw error(e)
@@ -94,10 +94,7 @@ module.exports = class extends Generator {
 
       try {
         const { stdout } = await this._private_create_database()
-        console.log('stdout ', greenText(stdout))
-        this.log(greenText('\n------------------------------'))
-        this.log('DATABASE CREATED!')
-        this.log(greenText('------------------------------\n'))
+        console.log('stdout ', greenText(stdout) + greenText('------------------------------'))
       } catch (e) {
         console.error(error(e))
         throw error(e)
@@ -106,10 +103,7 @@ module.exports = class extends Generator {
       if (this.answers.createTable) {
         try {
           const { stdout } = await this._private_create_table()
-          console.log('stdout ', greenText(stdout))
-          this.log(greenText('\n------------------------------'))
-          this.log('TABLE CREATED!')
-          this.log(greenText('------------------------------\n'))
+          console.log('stdout ', greenText(stdout) + greenText('------------------------------'))
         } catch (e) {
           console.error(error(e))
           throw e
@@ -317,6 +311,9 @@ module.exports = class extends Generator {
    * @private
    */
   _private_create_git_repo () {
+    this.log(greenText('\n------------------------------'))
+    this.log(`CREATING GIT REPOSITORY`)
+    this.log(greenText('------------------------------'))
     return this._private_execute_command('git init')
   }
 
@@ -346,7 +343,7 @@ module.exports = class extends Generator {
   _private_create_database () {
     this.log(greenText('\n------------------------------'))
     this.log('CREATING DATABASE!')
-    this.log(greenText('------------------------------\n'))
+    this.log(greenText('------------------------------'))
 
     return this._private_execute_command('npx sequelize db:create')
   }
@@ -360,7 +357,7 @@ module.exports = class extends Generator {
   _private_create_table () {
     this.log(greenText('\n------------------------------'))
     this.log('CREATING USER\'S TABLE!')
-    this.log(greenText('------------------------------\n'))
+    this.log(greenText('------------------------------'))
 
     return this._private_execute_command('npx sequelize db:migrate')
   }
