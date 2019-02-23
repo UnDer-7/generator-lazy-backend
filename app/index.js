@@ -10,7 +10,10 @@ const project = require('./generator/questions/project')
 const dash = chalk.green
 const initalText = chalk.red
 const greenText = chalk.greenBright
-const error = chalk.red
+const error = chalk.red.bold
+const endingMessage = chalk.bold.magenta
+const urlGitHub = chalk.bold.magenta.underline
+const warning = chalk.bold.yellow.underline
 
 module.exports = class extends Generator {
   constructor (args, opts) {
@@ -56,9 +59,8 @@ module.exports = class extends Generator {
    */
   async end () {
     try {
-      const { stdout, stderr } = await this._private_create_git_repo()
+      const { stdout } = await this._private_create_git_repo()
       console.log('stdout ', greenText(stdout))
-      console.log('stderr ', stderr)
     } catch (e) {
       console.log(error(e))
       throw error(e)
@@ -66,9 +68,33 @@ module.exports = class extends Generator {
 
     if (this.answers.createDB) {
       try {
-        const { stdout, stderr } = await this._private_create_database()
+        const { stdout } = await this._private_verify_sequelize_cli()
         console.log('stdout ', greenText(stdout))
-        console.log('stderr ', stderr)
+      } catch (e) {
+        console.log(warning(`\nIt's seems you don't have sequelize-cli installed!`))
+
+        let cliAnswer = await this.prompt([
+          {
+            type: 'confirm',
+            name: 'sequelizeCli',
+            message: `Would you like to install ${chalk.bold.underline('sequelize-cli')}?`
+          }
+        ])
+
+        if (cliAnswer.sequelizeCli) {
+          try {
+            const { stdout } = await this._private_install_sequelize_cli()
+            console.log('stdout ', greenText(stdout))
+          } catch (e) {
+            console.log(error(e))
+            throw error(e)
+          }
+        }
+      }
+
+      try {
+        const { stdout } = await this._private_create_database()
+        console.log('stdout ', greenText(stdout))
         this.log(greenText('\n------------------------------'))
         this.log('DATABASE CREATED!')
         this.log(greenText('------------------------------\n'))
@@ -76,21 +102,24 @@ module.exports = class extends Generator {
         console.error(error(e))
         throw error(e)
       }
-    }
 
-    if (this.answers.createDB && this.answers.createTable) {
-      try {
-        const { stdout, stderr } = await this._private_create_table()
-        console.log('stdout ', greenText(stdout))
-        console.log('stderr ', stderr)
-        this.log(greenText('\n------------------------------'))
-        this.log('TABLE CREATED!')
-        this.log(greenText('------------------------------\n'))
-      } catch (e) {
-        console.error(error(e))
-        throw e
+      if (this.answers.createTable) {
+        try {
+          const { stdout } = await this._private_create_table()
+          console.log('stdout ', greenText(stdout))
+          this.log(greenText('\n------------------------------'))
+          this.log('TABLE CREATED!')
+          this.log(greenText('------------------------------\n'))
+        } catch (e) {
+          console.error(error(e))
+          throw e
+        }
       }
     }
+
+    console.log(chalk.cyanBright.bold('\nAuthor: Mateus Gomes da Silva Cardoso'))
+    console.log(endingMessage(`\nIf you like lazy-backend project give it a star at GitHub`))
+    console.log(urlGitHub(`https://github.com/UnDer-7/generator-lazy-backend`))
   }
 
   /**
@@ -289,6 +318,24 @@ module.exports = class extends Generator {
    */
   _private_create_git_repo () {
     return this._private_execute_command('git init')
+  }
+
+  /**
+   * Check if the user has sequelize_cli installed
+   * @return {Promise} - Returns the child_process.exec()
+   * @private
+   */
+  _private_verify_sequelize_cli () {
+    return this._private_execute_command(' npx sequelize --version')
+  }
+
+  /**
+   * Install sequelize-cli globally
+   * @return {Promise} - Returns the child_process.exec()
+   * @private
+   */
+  _private_install_sequelize_cli () {
+    return this._private_execute_command('npm i -g sequelize-cli')
   }
 
   /**
