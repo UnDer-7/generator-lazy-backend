@@ -8,6 +8,7 @@ const _ = require('lodash')
 const project = require('./generator/questions/project')
 
 const dash = chalk.green
+const dash2 = chalk.cyanBright.bold
 const initalText = chalk.red
 const greenText = chalk.greenBright
 const error = chalk.red.bold
@@ -60,7 +61,7 @@ module.exports = class extends Generator {
   async end () {
     try {
       const { stdout } = await this._private_create_git_repo()
-      console.log('stdout ', greenText(stdout) + greenText('------------------------------\n'))
+      console.log('stdout ', greenText(stdout) + dash2('------------------------------\n'))
     } catch (e) {
       console.log(error(e))
       throw error(e)
@@ -69,7 +70,7 @@ module.exports = class extends Generator {
     if (this.answers.createDB) {
       try {
         const { stdout } = await this._private_verify_sequelize_cli()
-        console.log('stdout ', greenText(stdout))
+        console.log('stdout ', greenText(stdout) + dash2('------------------------------\n'))
       } catch (e) {
         console.log(warning(`\nIt's seems you don't have sequelize-cli installed!`))
 
@@ -94,7 +95,7 @@ module.exports = class extends Generator {
 
       try {
         const { stdout } = await this._private_create_database()
-        console.log('stdout ', greenText(stdout) + greenText('------------------------------'))
+        console.log('stdout ', greenText(stdout) + dash2('------------------------------\n'))
       } catch (e) {
         console.error(error(e))
         throw error(e)
@@ -103,7 +104,7 @@ module.exports = class extends Generator {
       if (this.answers.createTable) {
         try {
           const { stdout } = await this._private_create_table()
-          console.log('stdout ', greenText(stdout) + greenText('------------------------------'))
+          console.log('stdout ', greenText(stdout) + dash2('------------------------------\n'))
         } catch (e) {
           console.error(error(e))
           throw e
@@ -311,9 +312,9 @@ module.exports = class extends Generator {
    * @private
    */
   _private_create_git_repo () {
-    this.log(greenText('\n------------------------------'))
+    this.log(dash2('\n------------------------------'))
     this.log(`CREATING GIT REPOSITORY`)
-    this.log(greenText('------------------------------'))
+    this.log(dash2('------------------------------'))
     return this._private_execute_command('git init')
   }
 
@@ -323,6 +324,9 @@ module.exports = class extends Generator {
    * @private
    */
   _private_verify_sequelize_cli () {
+    this.log(dash2('\n------------------------------'))
+    this.log('CHECKING IF SEQUELIZE-CLI IS INSTALLED')
+    this.log(dash2('------------------------------'))
     return this._private_execute_command(' npx sequelize --version')
   }
 
@@ -341,9 +345,9 @@ module.exports = class extends Generator {
    * @private
    */
   _private_create_database () {
-    this.log(greenText('\n------------------------------'))
+    this.log(dash2('\n------------------------------'))
     this.log('CREATING DATABASE!')
-    this.log(greenText('------------------------------'))
+    this.log(dash2('------------------------------'))
 
     return this._private_execute_command('npx sequelize db:create')
   }
@@ -355,9 +359,9 @@ module.exports = class extends Generator {
    * @private
    */
   _private_create_table () {
-    this.log(greenText('\n------------------------------'))
+    this.log(dash2('\n------------------------------'))
     this.log('CREATING USER\'S TABLE!')
-    this.log(greenText('------------------------------'))
+    this.log(dash2('------------------------------'))
 
     return this._private_execute_command('npx sequelize db:migrate')
   }

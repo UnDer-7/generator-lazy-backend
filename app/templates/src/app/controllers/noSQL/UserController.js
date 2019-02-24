@@ -58,7 +58,7 @@ class UserController {
         return res.status(404).json({ error: 'User not found' })
       }
 
-      return res.json(user)
+      return res.status(200).json(user)
     } catch (e) {
       console.trace(e)
       res.status(500).json({ error: e })
@@ -80,4 +80,5 @@ class UserController {
     }
   }
 }
+
 module.exports = new UserController()
