@@ -5,16 +5,18 @@ const dash = chalk.green
 const warning = chalk.keyword('orange')
 const questionMark = chalk.green
 
+const validation = (response) => {
+  if (!response) return `Field can't be blank`
+  if (/\s/g.test(response)) return `Field can't have blank spaces\n--> ${response}`
+  return true
+}
+
 const projectOptions = [
   {
     type: 'input',
     name: 'projectName',
     message: `What's the project's name?`,
-    validate: function (response) {
-      if (!response) return `Project name can't be blank`
-      if (/\s/g.test(response)) return `The name of the project can't have blank spaces\n--> ${response}`
-      return true
-    }
+    validate: validation
   },
   {
     type: 'list',
@@ -66,11 +68,7 @@ const projectOptions = [
     default: function (response) {
       return snakeCase(response.projectName).toUpperCase()
     },
-    validate: function (response) {
-      if (!response) return `Database name can't be blank`
-      if (/\s/g.test(response)) return `The name of the database can't have blank spaces\n--> ${response}`
-      return true
-    }
+    validate: validation
   },
   {
     when: response => response.sqlDB !== 'sqlite' && response.databaseStyle !== 'mongo',
