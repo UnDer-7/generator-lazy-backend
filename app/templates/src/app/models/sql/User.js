@@ -12,14 +12,16 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         isEmail: true,
-        min: 5
+        notEmpty: true,
+        len: [5,50]
       }
     },
     password: {
       type: DataTypes.VIRTUAL,
       allowNull: false,
       validate: {
-        min: 5
+        notEmpty: true,
+        len: [5,50]
       }
     },
     password_hash: DataTypes.STRING
