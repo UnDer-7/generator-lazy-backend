@@ -25,8 +25,7 @@ module.exports = class extends Generator {
     this.log(dash('\n------------------------------'))
     this.log(lazyBackend)
     this.log(restAPI)
-    this.log(dash('------------------------------'))
-    this.log(('\nInitializing the lazy-backend\n'))
+    this.log(dash('------------------------------\n'))
   }
 
   /**
