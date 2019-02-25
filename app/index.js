@@ -1,31 +1,22 @@
 'use strict'
 const Generator = require('yeoman-generator')
 const path = require('path')
-const chalk = require('chalk')
 const util = require('util')
 const cmd = util.promisify(require('child_process').exec)
-const _ = require('lodash')
-const project = require('./generator/questions/project')
 
-const dash = chalk.green
-const dash2 = chalk.cyanBright.bold
-const initalText = chalk.red
-const greenText = chalk.greenBright
-const error = chalk.red.bold
-const endingMessage = chalk.bold.magenta
-const urlGitHub = chalk.bold.magenta.underline
-const warning = chalk.bold.yellow.underline
+const project = require('./generator/questions/project')
+const msg = require('./generator/messages')
 
 module.exports = class extends Generator {
   constructor (args, opts) {
     super(args, opts)
 
-    const lazyBackend = dash('---------') + initalText('LAZY-BACKEND') + dash('---------')
-    const restAPI = dash('-----------') + initalText('REST-API') + dash('-----------')
-    this.log(dash('\n------------------------------'))
+    const lazyBackend = msg.titleDash('---------') + msg.initialText('LAZY-BACKEND') + msg.titleDash('---------')
+    const restAPI = msg.titleDash('-----------') + msg.initialText('REST-API') + msg.titleDash('-----------')
+    this.log(msg.titleDash('\n------------------------------'))
     this.log(lazyBackend)
     this.log(restAPI)
-    this.log(dash('------------------------------\n'))
+    this.log(msg.titleDash('------------------------------\n'))
   }
 
   /**
@@ -60,60 +51,60 @@ module.exports = class extends Generator {
   async end () {
     try {
       const { stdout } = await this._private_create_git_repo()
-      console.log('stdout ', greenText(stdout) + dash2('------------------------------\n'))
+      console.log('stdout ', msg.greenText(stdout) + msg.dash('------------------------------\n'))
     } catch (e) {
-      console.log(error(e))
-      throw error(e)
+      console.log(msg.error(e))
+      throw msg.error(e)
     }
 
     if (this.answers.createDB) {
       try {
         const { stdout } = await this._private_verify_sequelize_cli()
-        console.log('stdout ', greenText(stdout) + dash2('------------------------------\n'))
+        console.log('stdout ', msg.greenText(stdout) + msg.dash('------------------------------\n'))
       } catch (e) {
-        console.log(warning(`\nIt's seems you don't have sequelize-cli installed!`))
+        console.log(msg.warning(`\nIt's seems you don't have sequelize-cli installed!`))
 
         let cliAnswer = await this.prompt([
           {
             type: 'confirm',
             name: 'sequelizeCli',
-            message: `Would you like to install ${chalk.bold.underline('sequelize-cli')}?`
+            message: `Would you like to install ${msg.underline('sequelize-cli')}?`
           }
         ])
 
         if (cliAnswer.sequelizeCli) {
           try {
             const { stdout } = await this._private_install_sequelize_cli()
-            console.log('stdout ', greenText(stdout))
+            console.log('stdout ', msg.greenText(stdout))
           } catch (e) {
-            console.log(error(e))
-            throw error(e)
+            console.log(msg.error(e))
+            throw msg.error(e)
           }
         }
       }
 
       try {
         const { stdout } = await this._private_create_database()
-        console.log('stdout ', greenText(stdout) + dash2('------------------------------\n'))
+        console.log('stdout ', msg.greenText(stdout) + msg.dash('------------------------------\n'))
       } catch (e) {
-        console.error(error(e))
-        throw error(e)
+        console.error(msg.error(e))
+        throw msg.error(e)
       }
 
       if (this.answers.createTable) {
         try {
           const { stdout } = await this._private_create_table()
-          console.log('stdout ', greenText(stdout) + dash2('------------------------------\n'))
+          console.log('stdout ', msg.greenText(stdout) + msg.dash('------------------------------\n'))
         } catch (e) {
-          console.error(error(e))
+          console.error(msg.error(e))
           throw e
         }
       }
     }
 
-    console.log(endingMessage(`\nIf you like lazy-backend project give it a star at GitHub`))
-    console.log(urlGitHub(`https://github.com/UnDer-7/generator-lazy-backend`))
-    console.log(chalk.cyanBright.bold('\nAuthor: Mateus Gomes da Silva Cardoso'))
+    console.log(msg.endingMessage(`\nIf you like lazy-backend project give it a star at GitHub`))
+    console.log(msg.urlGitHub(`https://github.com/UnDer-7/generator-lazy-backend`))
+    console.log(msg.author('\nAuthor: Mateus Gomes da Silva Cardoso'))
   }
 
   /**
@@ -311,9 +302,9 @@ module.exports = class extends Generator {
    * @private
    */
   _private_create_git_repo () {
-    this.log(dash2('\n------------------------------'))
+    this.log(msg.dash('\n------------------------------'))
     this.log(`CREATING GIT REPOSITORY`)
-    this.log(dash2('------------------------------'))
+    this.log(msg.dash('------------------------------'))
     return this._private_execute_command('git init')
   }
 
@@ -323,9 +314,9 @@ module.exports = class extends Generator {
    * @private
    */
   _private_verify_sequelize_cli () {
-    this.log(dash2('\n------------------------------'))
+    this.log(msg.dash('\n------------------------------'))
     this.log('CHECKING IF SEQUELIZE-CLI IS INSTALLED')
-    this.log(dash2('------------------------------'))
+    this.log(msg.dash('------------------------------'))
     return this._private_execute_command(' npx sequelize --version')
   }
 
@@ -344,9 +335,9 @@ module.exports = class extends Generator {
    * @private
    */
   _private_create_database () {
-    this.log(dash2('\n------------------------------'))
+    this.log(msg.dash('\n------------------------------'))
     this.log('CREATING DATABASE!')
-    this.log(dash2('------------------------------'))
+    this.log(msg.dash('------------------------------'))
 
     return this._private_execute_command('npx sequelize db:create')
   }
@@ -358,9 +349,9 @@ module.exports = class extends Generator {
    * @private
    */
   _private_create_table () {
-    this.log(dash2('\n------------------------------'))
+    this.log(msg.dash('\n------------------------------'))
     this.log('CREATING USER\'S TABLE!')
-    this.log(dash2('------------------------------'))
+    this.log(msg.dash('------------------------------'))
 
     return this._private_execute_command('npx sequelize db:migrate')
   }
@@ -373,7 +364,7 @@ module.exports = class extends Generator {
    * @private
    */
   _private_execute_command (command) {
-    console.log(`Running ${greenText(command)} command`)
+    console.log(`Running ${msg.greenText(command)} command`)
     return cmd(command, { cwd: this.rootPath })
   }
 
