@@ -1,9 +1,5 @@
 const { snakeCase } = require('lodash')
-const chalk = require('chalk')
-
-const dash = chalk.green
-const warning = chalk.keyword('orange')
-const questionMark = chalk.green
+const msg = require('../messages')
 
 const validation = (response) => {
   if (!response) return `Field can't be blank`
@@ -75,7 +71,7 @@ const projectOptions = [
     type: 'confirm',
     name: 'dbConfig',
     message: `Would you like to configure your database? `,
-    suffix: `${warning('(Username, Password and Host)')}\n`
+    suffix: `${msg.warning('(Username, Password and Host)')}\n`
   },
   {
     when: response => response.dbConfig && response.sqlDB !== 'sqlite',
@@ -126,14 +122,14 @@ const projectOptions = [
     type: 'confirm',
     name: 'createDB',
     message: `Would you like to create your database?`,
-    prefix: warning(`\n${dash('------------------------------')}\nFOR ALL THE NEXT QUESTIONS YOUR DATABASE MUST BE RUNNING!!\n${dash('------------------------------')}\n\n${questionMark('?')}`)
+    prefix: msg.warning(`\n${msg.titleDash('------------------------------')}\nFOR ALL THE NEXT QUESTIONS YOUR DATABASE MUST BE RUNNING!!\n${msg.titleDash('------------------------------')}\n\n${msg.titleDash('?')}`)
   },
   {
     when: response => response.createDB && response.login,
     type: 'confirm',
     name: 'createTable',
     message: `Would you like to create the User's table?`,
-    suffix: `\n${warning(' It\'s recommend when using JWT validation')}\n`
+    suffix: `\n${msg.warning(' It\'s recommend when using JWT validation')}\n`
   }
 ]
 module.exports = projectOptions
