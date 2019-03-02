@@ -13,7 +13,10 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         isEmail: true,
         notEmpty: true,
-        len: [5,50]
+        len: {
+          args: [5,50],
+          msg: 'only values with a length between 2 and 10 are allowed'
+        }
       }
     },
     password: {
@@ -21,7 +24,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: true,
-        len: [5,50]
+        len: {
+          args: [5,50],
+          msg: 'only values with a length between 2 and 10 are allowed'
+        }
       }
     },
     password_hash: DataTypes.STRING
