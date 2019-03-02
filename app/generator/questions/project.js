@@ -122,7 +122,7 @@ const projectOptions = [
     type: 'confirm',
     name: 'createDB',
     message: `Would you like to create your database?`,
-    prefix: msg.warning(`\n${msg.titleDash('------------------------------')}\nFOR ALL THE NEXT QUESTIONS YOUR DATABASE MUST BE RUNNING!!\n${msg.titleDash('------------------------------')}\n\n${msg.titleDash('?')}`)
+    prefix: `\n${msg.titleDash('\n------------------------------')}\n${msg.warning('FOR ALL THE NEXT QUESTIONS YOUR DATABASE MUST BE RUNNING!!')}\n${msg.titleDash('------------------------------')}\n\n${msg.titleDash('?')}`
   },
   {
     when: response => response.createDB && response.login,
