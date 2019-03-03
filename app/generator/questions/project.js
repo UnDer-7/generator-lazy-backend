@@ -7,8 +7,8 @@ const validation = (response) => {
   if (!/^[a-z0-9-_]+$/i.test(response)) return `Invalid character\n-->${response}`
   if (/^[0-9].+$/.test(response)) return `Can't start with number\n-->${response}`
   if (!/^[A-Z]/.test(response)) return `The first character needs to be a capital letter\n-->${response}`
-  if (endsWith(response, '_')) return `Can't the name with _\n-->${response}`
-  if (endsWith(response, '-')) return `Can't the name with -\n-->${response}`
+  if (endsWith(response, '_')) return `Can't end the name with _\n-->${response}`
+  if (endsWith(response, '-')) return `Can't end the name with -\n-->${response}`
   return true
 }
 
