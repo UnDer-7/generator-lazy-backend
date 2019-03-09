@@ -1,7 +1,0 @@
-NODE_ENV=development
-<%if (login) { %>
-APP_SECRET=<%= appSecret %>
-<% } %>
-<% if (db === 'mongo') { %>
-DB_URL=mongodb://localhost:27017/<%= dbName %>
-<% } %>

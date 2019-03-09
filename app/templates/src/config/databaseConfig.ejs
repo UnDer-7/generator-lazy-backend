@@ -1,13 +1,14 @@
 'use strict'
+require('dotenv').config();
 
 module.exports = {
   development: {
-    username: '<%= username  %>',
-    password: '<%= password  %>',
-    database: '<%= dbName  %>',
-    host: 'localhost',
-    dialect: '<%= db  %>',<%if (port) { %>
-    port: '<%= port  %>', <% } %>
+    username: process.env.USER_NAME,
+    password: process.env.USER_PASSWORD,
+    database: process.env.DATABASE,
+    host: process.env.HOST',
+    dialect: process.env.DIALECT,
+    port: process.env.DATABASE_PORT,
     operatorsAliases: false
   },
   test: {

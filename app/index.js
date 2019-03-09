@@ -113,12 +113,13 @@ module.exports = class extends Generator {
    *  - server.js
    *  - routes.js
    *  - index.js
+   *  - consoleColors.js
    *  @private
    */
   _private_src () {
     this.destinationRoot(path.resolve(this.answers.projectName, 'src'))
     this.fs.copyTpl(
-      this.templatePath('./src/server.js'),
+      this.templatePath('./src/server.ejs'),
       this.destinationPath('server.js'),
       {
         db: this.answers.databaseStyle
@@ -136,6 +137,11 @@ module.exports = class extends Generator {
     this.fs.copyTpl(
       this.templatePath('./src/index.js'),
       this.destinationPath('index.js')
+    )
+
+    this.fs.copyTpl(
+      this.templatePath('./src/consoleColors.js'),
+      this.destinationPath('consoleColors.js')
     )
   }
 
@@ -157,13 +163,11 @@ module.exports = class extends Generator {
     )
 
     this.fs.copyTpl(
-      this.templatePath('./env'),
+      this.templatePath('./env.ejs'),
       this.destinationPath('.env'),
       {
-        dbName: this.answers.databaseName,
-        appSecret: this._private_generate_random_number(),
-        login: this.answers.login,
-        db: this.answers.databaseStyle
+        answer: this.answers,
+        appSecret: this._private_generate_random_number()
       }
     )
 
@@ -267,15 +271,8 @@ module.exports = class extends Generator {
   _private_sequelize_config () {
     this.destinationRoot(path.resolve('..', '..', 'config'))
     this.fs.copyTpl(
-      this.templatePath('./src/config/databaseConfig.js'),
-      this.destinationPath('databaseConfig.js'),
-      {
-        dbName: this.answers.databaseName,
-        username: this.answers.username,
-        password: this.answers.password,
-        db: this.answers.sqlDB,
-        port: this.answers.host
-      }
+      this.templatePath('./src/config/databaseConfig.ejs'),
+      this.destinationPath('databaseConfig.js')
     )
 
     this.destinationRoot(path.resolve('..', 'database'))

@@ -6,14 +6,20 @@ const express = require('express')
 const validate = require('express-validation')
 const logger = require('morgan')
 const Youch = require('youch')
-<%if (db === 'mongo') { %>
+<%_ if (db === 'mongo') { _%>
 const mongoose = require('mongoose')
+<%_ } _%>
+<%_ if (db === 'sql') { _%>
+const Sequelize = require('sequelize')
 <% } %>
 class App {
   constructor () {
     this.express = express()
-<%if (db === 'mongo') { %>
-    this.database() <% } %>
+  <%if (db === 'mongo') { %>
+    this.database()
+  <%_ } else {%>
+    this.testDatabaseConnection()
+  <%_}_%>
     this.middleware()
     this.routes()
     this.exception()
@@ -27,6 +33,27 @@ class App {
     mongoose.set('debug', true)
   }
 <% } %>
+<%_ if (db === 'sql') { _%>
+  async testDatabaseConnection () {
+    const sequelize = new Sequelize(
+      process.env.DATABASE,
+      process.env.USER_NAME,
+      process.env.USER_PASSWORD,
+      {
+        host: process.env.HOST,
+        dialect: process.env.DIALECT,
+        operatorsAliases: false
+      }
+    )
+
+    sequelize.authenticate().then(() => {
+      console.log(color.FgGreen, 'Connection with the Database has been established successfully');
+    }).catch(err => {
+      console.log(color.FgRed, '\nUnable to connect to the database\n');
+      console.trace(color.FgRed ,err);
+    })
+  }
+<% }%>
   middleware () {
     this.express.use(logger('dev'))
     this.express.disable('x-powered-by')

@@ -76,7 +76,7 @@ const projectOptions = [
     type: 'confirm',
     name: 'dbConfig',
     message: `Would you like to configure your database? `,
-    suffix: `${msg.warning('(Username, Password and Host)')}\n`
+    suffix: `${msg.warning('(Username, Password and Port)')}\n`
   },
   {
     when: response => response.dbConfig && response.sqlDB !== 'sqlite',
@@ -94,7 +94,7 @@ const projectOptions = [
   {
     when: response => response.dbConfig && response.sqlDB !== 'sqlite',
     type: 'input',
-    name: 'host',
+    name: 'dbPort',
     message: `What port your database is using?`,
     default: response => {
       switch (response.sqlDB) {
@@ -122,7 +122,7 @@ const projectOptions = [
   },
   {
     when: response => {
-      return (response.npmI && response.databaseStyle !== 'mongo')
+      return response.npmI && response.databaseStyle !== 'mongo' && response.dbConfig
     },
     type: 'confirm',
     name: 'createDB',
@@ -130,7 +130,9 @@ const projectOptions = [
     prefix: `\n${msg.titleDash('\n------------------------------')}\n${msg.warning('FOR ALL THE NEXT QUESTIONS YOUR DATABASE MUST BE RUNNING!!')}\n${msg.titleDash('------------------------------')}\n\n${msg.titleDash('?')}`
   },
   {
-    when: response => response.createDB && response.login,
+    when: response => {
+      return response.createDB && response.login && response.dbConfig
+    },
     type: 'confirm',
     name: 'createTable',
     message: `Would you like to create the User's table?`,
