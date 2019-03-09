@@ -45,8 +45,11 @@ module.exports = (sequelize, DataTypes) => {
           user.password = null
         }
       }
-    },
-    freezeTableName: true
+    }
+  },
+  {
+    freezeTableName: true,
+    tableName: 'User'
   })
 
   User.associate = function (models) {
