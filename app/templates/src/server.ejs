@@ -6,13 +6,15 @@ const express = require('express')
 const validate = require('express-validation')
 const logger = require('morgan')
 const Youch = require('youch')
-const color = require('./consoleColors')
+const cors = require('cors')
 <%_ if (db === 'mongo') { _%>
 const mongoose = require('mongoose')
 <%_ } _%>
 <%_ if (db === 'sql') { _%>
 const Sequelize = require('sequelize')
 <% } %>
+const color = require('./consoleColors')
+
 class App {
   constructor () {
     this.express = express()
@@ -21,6 +23,7 @@ class App {
   <%_ } else {%>
     this.testDatabaseConnection()
   <%_}_%>
+    this.setCors()
     this.middleware()
     this.routes()
     this.exception()
@@ -53,6 +56,10 @@ class App {
       console.log(color.FgRed, '\nUnable to connect to the database\n');
       console.trace(color.FgRed ,err);
     })
+  }
+
+  setCors() {
+    this.express.use(cors());
   }
 <% }%>
   middleware () {

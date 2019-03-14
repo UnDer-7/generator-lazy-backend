@@ -185,7 +185,7 @@ module.exports = class extends Generator {
       this.templatePath('./package.json'),
       this.destinationPath('package.json'),
       {
-        project: this.answers.projectName,
+        project: this.answers.projectName.toLowerCase(),
         login: this.answers.login,
         db: this.answers.databaseStyle
       }
