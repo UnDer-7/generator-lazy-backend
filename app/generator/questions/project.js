@@ -75,7 +75,7 @@ const projectOptions = [
     when: response => response.sqlDB !== 'sqlite' && response.databaseStyle !== 'mongo',
     type: 'confirm',
     name: 'dbConfig',
-    message: `Would you like to configure your database? `,
+    message: `Would you like to configure your database access?`,
     suffix: `${msg.warning('(Username, Password and Port)')}\n`
   },
   {
