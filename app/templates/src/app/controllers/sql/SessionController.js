@@ -9,11 +9,11 @@ class SessionController {
     const user = await User.findOne({ where: { email: email } })
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' })
+      return res.status(400).json({ error: 'User not found' })
     }
 
     if (!await user.checkPassword(password, user.password_hash)) {
-      return res.status(400).json({ error: 'Wrong password' })
+      return res.status(400).json({ error: 'Invalid Password' })
     }
 
     const token = user.createToke(user)

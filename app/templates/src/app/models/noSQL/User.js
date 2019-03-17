@@ -40,8 +40,16 @@ UserSchema.methods = {
 }
 
 UserSchema.statics = {
-  createToken ({ id }) {
-    return jwt.sign({ data: id }, process.env.APP_SECRET, { expiresIn: '1h' })
+  createToken (userRes) {
+    const user = Object.assign({}, {
+      _id: userRes._id,
+      email: userRes.email,
+      createdAt: userRes.createdAt
+    })
+
+    return jwt.sign(user, process.env.APP_SECRET, {
+      expiresIn: '1h', algorithm: 'HS512'
+    })
   }
 }
 

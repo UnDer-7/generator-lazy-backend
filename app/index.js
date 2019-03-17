@@ -1,5 +1,6 @@
 'use strict'
 const Generator = require('yeoman-generator')
+const bcrypt = require('bcrypt')
 const path = require('path')
 const util = require('util')
 const cmd = util.promisify(require('child_process').exec)
@@ -367,18 +368,21 @@ module.exports = class extends Generator {
 
   /**
    * Generates a random string
-   * @param {Number}size - (default value: 25). Set size of the generated string.
-   * @param {Boolean}letters - (default value: true). If false will generated a
    * string containing only numbers, other wise a string with numbers and letters.
    * @return The generated string
    * @private
    */
-  _private_generate_random_number (size = 25, letters = true) {
+  _private_generate_random_number () {
     let text = ''
-    const possible = letters ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' : '0123456789'
+    const letters = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`
+    const numbers = `0123456789`
+    const specialCharacters = `!@#$%*()_+¹²³£¢¬{[]}§´"'^~ç,.;/<>:?─·ª°`
 
-    for (let i = 0; i < size; i++) text += possible.charAt(Math.floor(Math.random() * possible.length))
-    return text
+    const possibilities = letters + numbers + specialCharacters
+    for (let i = 0; i < 50; i++) text += possibilities.charAt(Math.floor(Math.random() * possibilities.length))
+
+    const appSecret = bcrypt.hashSync(text, 10)
+    return appSecret
   }
 
   /**

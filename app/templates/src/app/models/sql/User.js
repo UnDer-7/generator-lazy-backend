@@ -6,52 +6,52 @@ const jwt = require('jsonwebtoken')
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-      email: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-        validate: {
-          notEmpty: true,
-          isEmail: {
-            msg: 'invalid email format'
-          },
-          len: {
-            args: [5, 50],
-            msg: 'only values with a length between 5 and 50 are allowed'
-          }
-        }
-      },
-      password: {
-        type: DataTypes.VIRTUAL,
-        allowNull: false,
-        validate: {
-          notEmpty: true,
-          len: {
-            args: [5, 50],
-            msg: 'only values with a length between 5 and 50 are allowed'
-          }
-        }
-      },
-      password_hash: DataTypes.STRING
-    },
-    {
-      hooks: {
-        beforeCreate: async user => {
-          if (user.password) {
-            user.password_hash = await bcrypt.hash(user.password, 8)
-            user.password = null
-          }
+    email: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+        isEmail: {
+          msg: 'invalid email format'
         },
-        beforeUpdate: async user => {
-          if (user.password) {
-            user.password_hash = await bcrypt.hash(user.password, 8)
-            user.password = null
-          }
+        len: {
+          args: [5, 50],
+          msg: 'only values with a length between 5 and 50 are allowed'
+        }
+      }
+    },
+    password: {
+      type: DataTypes.VIRTUAL,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+        len: {
+          args: [5, 50],
+          msg: 'only values with a length between 5 and 50 are allowed'
+        }
+      }
+    },
+    password_hash: DataTypes.STRING
+  },
+  {
+    hooks: {
+      beforeCreate: async user => {
+        if (user.password) {
+          user.password_hash = await bcrypt.hash(user.password, 8)
+          user.password = null
         }
       },
-      freezeTableName: true,
-      tableName: 'USER'
-    })
+      beforeUpdate: async user => {
+        if (user.password) {
+          user.password_hash = await bcrypt.hash(user.password, 8)
+          user.password = null
+        }
+      }
+    },
+    freezeTableName: true,
+    tableName: 'USER'
+  })
 
   User.associate = function (models) {
     // associations can be defined here

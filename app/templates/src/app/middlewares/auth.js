@@ -10,10 +10,17 @@ module.exports = async (req, res, next) => {
     return res.status(401).json({ error: 'Token not found' })
   }
 
-  const [, token] = authHeader.split(' ')
+  const [type, token] = authHeader.split(' ')
+
+  if (type !== 'Bearer') {
+    return res.status(401).json({ error: 'Not authorized!' })
+  }
+
   try {
     const decoded = await promisify(jwt.verify)(token, process.env.APP_SECRET)
-    // req.templateId = decoded.id --> set user's id in the requisition
+    req.templateId = decoded._id
+    req.userData = decoded
+
     return next()
   } catch (e) {
     console.trace(e)

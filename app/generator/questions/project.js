@@ -76,7 +76,7 @@ const projectOptions = [
     type: 'confirm',
     name: 'dbConfig',
     message: `Would you like to configure your database access?`,
-    suffix: `${msg.warning('(Username, Password and Port)')}\n`
+    suffix: `${msg.warning('(Username, Password and Port)')}`
   },
   {
     when: response => response.dbConfig && response.sqlDB !== 'sqlite',

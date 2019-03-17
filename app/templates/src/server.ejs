@@ -21,7 +21,7 @@ class App {
   <%if (db === 'mongo') { %>
     this.database()
   <%_ } else {%>
-    this.testDatabaseConnection()
+    this.isDatabaseConnected()
   <%_}_%>
     this.setCors()
     this.middleware()
@@ -38,7 +38,7 @@ class App {
   }
 <% } %>
 <%_ if (db === 'sql') { _%>
-  async testDatabaseConnection () {
+  async isDatabaseConnected () {
     const sequelize = new Sequelize(
       process.env.DATABASE,
       process.env.USER_NAME,
@@ -57,11 +57,11 @@ class App {
       console.trace(color.FgRed ,err);
     })
   }
-
+<%_}_%>
   setCors() {
     this.express.use(cors());
   }
-<% }%>
+
   middleware () {
     this.express.use(logger('dev'))
     this.express.disable('x-powered-by')
