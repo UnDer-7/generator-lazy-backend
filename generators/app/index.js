@@ -30,7 +30,7 @@ module.exports = class extends Generator {
       '|______ |\\/|____________|   ||     ()\n' +
       ' (__)   \\__/        (__)    ()\n' +
       '\n')
-    this.log(('--------------LAZY-BACKEND--------------\n\n'))
+    this.log('--------------LAZY-BACKEND--------------\n\n')
 
     await this.prompt(projectQuestions)
   }
