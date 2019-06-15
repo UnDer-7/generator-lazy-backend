@@ -1,6 +1,6 @@
 {
   "name": "generator-lazy-backend",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "A simple generator to create a backend using NodeJS, Express.js and Mongoose",
   "main": "index.js",
   "homepage": "https://github.com/UnDer-7/generator-lazy-backend#readme",
@@ -25,21 +25,17 @@
     "url": "https://github.com/UnDer-7/generator-lazy-backend"
   },
   "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^3.0.4",
-    "chalk": "^2.4.1",
-    "lodash": "^4.17.11",
-    "yeoman-generator": "^3.1.1"
-  },
   "files": [
-    "app"
+    "app",
+    "entity"
   ],
-  "devDependencies": {
-    "eslint": "^5.16.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.17.3",
-    "eslint-plugin-node": "^8.0.1",
-    "eslint-plugin-promise": "^4.1.1",
-    "eslint-plugin-standard": "^4.0.0"
+  "engines": {
+    "node": "12.4.0"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "chalk": "^2.4.2",
+    "lodash": "^4.17.11",
+    "yeoman-generator": "^4.0.1"
   }
 }
