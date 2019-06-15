@@ -1,12 +1,13 @@
 'use strict'
 const Generator = require('yeoman-generator/lib')
+const projectQuestions = require('./generator/prompt/project');
 
 module.exports = class extends Generator {
   constructor (args, opts) {
     super(args, opts)
   }
 
-  start() {
+  async start () {
     this.log('            .-""-._\n' +
       '           / ___/  \\         _&_\n' +
       '     _.--""|/    `\\|        // \\\\\n' +
@@ -29,7 +30,9 @@ module.exports = class extends Generator {
       '|______ |\\/|____________|   ||     ()\n' +
       ' (__)   \\__/        (__)    ()\n' +
       '\n')
-    this.log(('--------------LAZY-BACKEND--------------'))
+    this.log(('--------------LAZY-BACKEND--------------\n\n'))
+
+    await this.prompt(projectQuestions)
   }
 }
 
